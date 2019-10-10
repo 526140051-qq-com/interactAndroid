@@ -1,0 +1,49 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/text_color"
+    android:orientation="vertical">
+
+
+    <com.lemi.interact.view.PersonalItemView
+        android:id="@+id/item_liwu"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:icon="@mipmap/liwu"
+        app:name="我送出的礼物"
+        android:background="#ffffffff"
+        app:show_more="true"
+        app:show_line="true" />
+
+    <com.lemi.interact.view.PersonalItemView
+        android:layout_marginTop="28dp"
+        android:id="@+id/item_my_liwu"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:icon="@mipmap/shoudaoliwu"
+        app:name="我收到的礼物"
+        android:background="#ffffffff"
+        app:show_more="true"
+        app:show_line="true" />
+
+    <com.lemi.interact.view.PersonalItemView
+        android:id="@+id/item_chongzhi"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:icon="@mipmap/chongzhi"
+        app:name="我的充值"
+        android:background="#ffffffff"
+        app:show_more="true"
+        app:show_line="true" />
+
+    <com.lemi.interact.view.PersonalItemView
+        android:id="@+id/item_tixian"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:icon="@mipmap/tixian"
+        app:name="我的提现"
+        android:background="#ffffffff"
+        app:show_more="true"
+        app:show_line="true" />
+</LinearLayout>
