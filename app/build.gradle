@@ -32,4 +32,8 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     implementation 'com.zhy:okhttputils:2.6.2'
     implementation project(':IMLib')
+    implementation 'com.android.support:recyclerview-v7:28.+'
+    implementation 'de.hdodenhof:circleimageview:2.1.0'
+    api 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+'
+
 }

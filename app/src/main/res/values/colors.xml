@@ -6,4 +6,7 @@
     <color name="input_hint">#ffffff</color>
     <color name="text_color">#ffffff</color>
     <color name="button_bg">#4C94FF</color>
+    <color name="login_out">#ff4c94ff</color>
+    <color name="my_text_color">#ffc4c4c4</color>
+    <color name="my_nick_name">#ff333333</color>
 </resources>

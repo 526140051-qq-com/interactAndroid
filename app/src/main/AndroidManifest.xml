@@ -32,7 +32,13 @@
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.RegisterActivity" />
         <activity android:name=".activity.ForgetActivity" />
-        <activity android:name=".activity.IndexActivity"></activity>
+        <activity android:name=".activity.IndexActivity" />
+        <activity android:name=".activity.RoomActivity" />
+        <activity android:name=".activity.MemberActivity" />
+        <activity android:name=".activity.UserInfoActivity" />
+        <activity android:name=".activity.WithdrawRecordActivity" />
+        <activity android:name=".activity.RechargeRecordActivity" />
+        <activity android:name=".activity.PersonalActivity"></activity>
     </application>
 
 </manifest>

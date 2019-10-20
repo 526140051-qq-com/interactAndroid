@@ -9,4 +9,16 @@
     <string name="code_text">获取验证码</string>
     <string name="register_text">注册</string>
     <string name="forget_text">修改</string>
+    <string name="chongzhi">我的充值</string>
+    <string name="tixian">我的提现</string>
+    <string name="myliwu">我收到的礼物</string>
+    <string name="liwu">我送出的礼物</string>
+    <string name="login_out">退出登录</string>
+    <string name="my">我的</string>
+    <string name="index">首页</string>
+    <string name="canji">残疾人</string>
+    <string name="laonian">老年人</string>
+    <string name="bangong">办公区域</string>
+    <string name="my_info">查看并编辑个人信息</string>
+    <string name="xiangqinjiaoyou">相亲交友</string>
 </resources>

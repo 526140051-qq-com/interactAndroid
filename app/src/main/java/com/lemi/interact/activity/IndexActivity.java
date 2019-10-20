@@ -1,5 +1,6 @@
 package com.lemi.interact.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -8,15 +9,24 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View.OnClickListener;
 
 import java.util.ArrayList;
+
 import android.view.View;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lemi.interact.R;
 import com.lemi.interact.adapter.ContentAdapter;
+import com.lemi.interact.config.Seeting;
 import com.lemi.interact.fragment.HomeFragment;
 import com.lemi.interact.fragment.MyFragment;
+import com.tencent.mm.opensdk.constants.ConstantsAPI;
+import com.tencent.mm.opensdk.modelbase.BaseResp;
+import com.tencent.mm.opensdk.modelpay.PayReq;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 public class IndexActivity extends AppCompatActivity implements OnClickListener, ViewPager.OnPageChangeListener {
     private LinearLayout ll_home;
@@ -28,13 +38,19 @@ public class IndexActivity extends AppCompatActivity implements OnClickListener,
     private ViewPager viewPager;
     private ContentAdapter adapter;
     private ArrayList<Fragment> listFragment;
+    String pageIndex;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getSupportActionBar() != null){
+        if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
         setContentView(R.layout.activity_index);
+
+        Intent intent = getIntent();
+        pageIndex = intent.getStringExtra("pageIndex");
         initView();
         initEvent();
     }
@@ -53,15 +69,23 @@ public class IndexActivity extends AppCompatActivity implements OnClickListener,
         this.tv_home = (TextView) findViewById(R.id.tv_home);
         this.tv_my = (TextView) findViewById(R.id.tv_my);
         this.viewPager = (ViewPager) findViewById(R.id.vp_content);
-        listFragment=new ArrayList<Fragment>(); //new一个List<Fragment>
+        listFragment = new ArrayList<Fragment>(); //new一个List<Fragment>
         Fragment f1 = new HomeFragment();
         Fragment f2 = new MyFragment();
         listFragment.add(f1);
         listFragment.add(f2);
-        FragmentManager fm=getSupportFragmentManager();
-        this.adapter = new ContentAdapter(fm,listFragment);
+        FragmentManager fm = getSupportFragmentManager();
+        this.adapter = new ContentAdapter(fm, listFragment);
         viewPager.setAdapter(adapter);
-        viewPager.setCurrentItem(0);
+        if (pageIndex != null){
+            restartBotton();
+            iv_my.setImageResource(R.mipmap.icon_my_active);
+            tv_my.setTextColor(0xff4c94ff);
+            viewPager.setCurrentItem(1);
+        }else {
+            viewPager.setCurrentItem(0);
+        }
+
     }
 
     @Override
@@ -103,7 +127,7 @@ public class IndexActivity extends AppCompatActivity implements OnClickListener,
             case R.id.ll_my:
                 iv_my.setImageResource(R.mipmap.icon_my_active);
                 tv_my.setTextColor(0xff4c94ff);
-                viewPager.setCurrentItem(3);
+                viewPager.setCurrentItem(1);
                 break;
             default:
                 break;
@@ -116,4 +140,5 @@ public class IndexActivity extends AppCompatActivity implements OnClickListener,
         tv_home.setTextColor(0xff8e9096);
         tv_my.setTextColor(0xff8e9096);
     }
+
 }

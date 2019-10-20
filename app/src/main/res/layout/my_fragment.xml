@@ -4,46 +4,131 @@
     android:layout_height="match_parent"
     android:background="@color/text_color"
     android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="#ffffffff"
+        android:gravity="center"
+        android:orientation="vertical">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:paddingLeft="15dp"
+            android:text="@string/my"
+            android:textColor="#ff000000"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_userinfo"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="#ffffffff"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginLeft="15dp">
+
+            <TextView
+                android:id="@+id/user_nick_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/my_nick_name"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/my_text_color"
+                android:textSize="14sp"
+                android:text="@string/my_info"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1">
+            <com.lemi.interact.view.MyImgView
+                android:id="@+id/user_photo"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:civ_border_color="#FFFFFF"
+                android:layout_gravity="right"
+                android:layout_marginRight="15dp"
+                app:civ_border_width="2dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
     <com.lemi.interact.view.PersonalItemView
         android:id="@+id/item_liwu"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        app:icon="@mipmap/liwu"
-        app:name="我送出的礼物"
+        android:layout_marginTop="20dp"
         android:background="#ffffffff"
-        app:show_more="true"
-        app:show_line="true" />
+        app:icon="@mipmap/liwu"
+        app:name="@string/liwu"
+        app:show_line="false"
+        app:show_more="true" />
 
     <com.lemi.interact.view.PersonalItemView
-        android:layout_marginTop="28dp"
         android:id="@+id/item_my_liwu"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        app:icon="@mipmap/shoudaoliwu"
-        app:name="我收到的礼物"
+        android:layout_marginTop="20dp"
         android:background="#ffffffff"
-        app:show_more="true"
-        app:show_line="true" />
+        app:icon="@mipmap/shoudaoliwu"
+        app:name="@string/myliwu"
+        app:show_line="false"
+        app:show_more="true" />
 
     <com.lemi.interact.view.PersonalItemView
         android:id="@+id/item_chongzhi"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        app:icon="@mipmap/chongzhi"
-        app:name="我的充值"
+        android:layout_marginTop="20dp"
         android:background="#ffffffff"
-        app:show_more="true"
-        app:show_line="true" />
+        app:icon="@mipmap/chongzhi"
+        app:name="@string/chongzhi"
+        app:show_line="false"
+        app:show_more="true" />
 
     <com.lemi.interact.view.PersonalItemView
         android:id="@+id/item_tixian"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        app:icon="@mipmap/tixian"
-        app:name="我的提现"
+        android:layout_marginTop="20dp"
         android:background="#ffffffff"
-        app:show_more="true"
-        app:show_line="true" />
+        app:icon="@mipmap/tixian"
+        app:name="@string/tixian"
+        app:show_line="false"
+        app:show_more="true" />
+
+
+    <LinearLayout
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/login_out"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#00000000"
+            android:text="@string/login_out"
+            android:textColor="@color/login_out"
+            android:textSize="15sp" />
+    </LinearLayout>
 </LinearLayout>

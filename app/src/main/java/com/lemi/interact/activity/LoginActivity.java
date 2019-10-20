@@ -86,7 +86,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                     Toast.makeText(LoginActivity.this, "请输入密码", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
+                login.setEnabled(false);
                 OkHttpUtils
                         .post()
                         .url(Api.apiHost + Api.login)
@@ -117,6 +117,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                                 } else {
                                     Toast.makeText(LoginActivity.this, apiResult.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
+                                login.setEnabled(true);
                             }
                         });
                 break;
