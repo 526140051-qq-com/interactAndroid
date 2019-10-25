@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">interact</string>
+    <string name="app_name">王炸交友</string>
     <string name="login_hint">输入手机号</string>
     <string name="pwd_hint">输入密码</string>
     <string name="forget_pwd">忘记密码？</string>

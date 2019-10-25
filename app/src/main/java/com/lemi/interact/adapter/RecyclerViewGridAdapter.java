@@ -54,7 +54,6 @@ public class RecyclerViewGridAdapter extends RecyclerView.Adapter<RecyclerViewGr
                 RoomResponse roomResponse = mDateBeen.get(position);
                 Integer createUserId = roomResponse.getCreateUserId();
                 Integer roomId = roomResponse.getRoomId();
-                Toast.makeText(v.getContext(), "你点击了项,roomId=" + roomId + ",createUserId=" + createUserId, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent();
                 intent.putExtra("roomId", roomId + "");
                 intent.putExtra("createUserId", createUserId + "");
