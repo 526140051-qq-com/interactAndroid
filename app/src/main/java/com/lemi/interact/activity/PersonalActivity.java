@@ -12,13 +12,28 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.google.gson.reflect.TypeToken;
 import com.lemi.interact.R;
 import com.lemi.interact.api.Api;
+import com.lemi.interact.bean.ApiResult;
+import com.lemi.interact.bean.Room;
+import com.lemi.interact.util.MyUtils;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
+
+import cn.rongcloud.rtc.RTCErrorCode;
+import cn.rongcloud.rtc.RongRTCConfig;
+import cn.rongcloud.rtc.RongRTCEngine;
+import cn.rongcloud.rtc.callback.JoinRoomUICallBack;
+import cn.rongcloud.rtc.callback.RongRTCResultUICallBack;
+import cn.rongcloud.rtc.room.RongRTCRoom;
+import cn.rongcloud.rtc.stream.local.RongRTCCapture;
 
 import static com.lemi.interact.MainActivity.REQ_CODE_FOR_REGISTER;
 
-public class PersonalActivity extends AppCompatActivity implements View.OnClickListener{
+public class PersonalActivity extends AppCompatActivity implements View.OnClickListener {
 
     private WebView webView;
 
@@ -31,6 +46,8 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
     private String createUserId;
 
     private String categoryId;
+
+    RongRTCRoom mRongRTCRoom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +100,7 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
                     webView.goBack();
                 } else {
                     Intent intent = new Intent();
-                    intent.putExtra("categoryId",categoryId);
+                    intent.putExtra("categoryId", categoryId);
                     intent.setClass(this, RoomActivity.class);
                     startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
                     finish();
@@ -108,8 +125,70 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
 
     public class JsInteration {
         @JavascriptInterface
-        public String toWXPay(Integer chargeId) {
+        public String joinRoom(String roomId) {
+            System.out.println(roomId);
+            OkHttpUtils
+                    .post()
+                    .url(Api.apiHost + Api.findRoomById)
+                    .addParams("roomId", roomId + "")
+                    .build()
+                    .execute(new StringCallback() {
+                        @Override
+                        public void onError(okhttp3.Call call, Exception e, int id) {
+                        }
 
+                        @Override
+                        public void onResponse(String response, int id) {
+                            java.lang.reflect.Type type = new TypeToken<ApiResult>() {
+                            }.getType();
+                            ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
+                            if (apiResult.getCode().intValue() == 0) {
+
+                                if (apiResult.getData()!=null){
+                                    java.lang.reflect.Type roomType = new TypeToken<Room>() {
+                                    }.getType();
+                                    Room room = MyUtils.getGson().fromJson(apiResult.getData().toString(), roomType);
+                                    RongRTCConfig.Builder configBuilder = new RongRTCConfig.Builder();
+
+                                    //将配置完成后的 RongRTCConfig Builder对象设置给 RongRTCCapture
+                                    RongRTCCapture.getInstance().setRTCConfig(configBuilder.build());
+
+                                    RongRTCEngine.getInstance().joinRoom(room.getNum(), new JoinRoomUICallBack() {
+                                        @Override
+                                        protected void onUiSuccess(RongRTCRoom rongRTCRoom) {
+                                            mRongRTCRoom = rongRTCRoom;
+                                            RongRTCCapture.getInstance().startCameraCapture();
+//                                            mLocalUser = rongRTCRoom.getLocalUser();
+//                                            RongRTCCapture.getInstance().setRongRTCVideoView(local); //设置本地预览视图
+//                                            RongRTCCapture.getInstance().startCameraCapture();       //开始采集数据
+//                                            setEventListener();                                      //设置监听
+//                                            addRemoteUsersView();
+//                                            subscribeAll();                                          //订阅资源
+//                                            publishDefaultStream();                                  //发布资源
+                                        }
+
+                                        @Override
+                                        protected void onUiFailed(RTCErrorCode rtcErrorCode) {
+                                            System.out.println(rtcErrorCode.getValue());
+                                        }
+
+
+                                    });
+
+                                }
+
+
+
+
+                            } else {
+                                Toast.makeText(PersonalActivity.this, apiResult.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+                    });
+
+
+            System.out.println(roomId);
             return "";
         }
     }

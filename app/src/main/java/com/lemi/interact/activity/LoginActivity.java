@@ -18,10 +18,13 @@ import com.lemi.interact.MainActivity;
 import com.lemi.interact.R;
 import com.lemi.interact.api.Api;
 import com.lemi.interact.bean.ApiResult;
+import com.lemi.interact.util.MainHandler;
 import com.lemi.interact.util.MyUtils;
 import com.lemi.interact.util.PhoneUtil;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+
+import io.rong.imlib.RongIMClient;
 
 import static com.lemi.interact.MainActivity.REQ_CODE_FOR_REGISTER;
 
@@ -45,7 +48,6 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_login);
-
         context = this;
         init();
     }
@@ -104,16 +106,17 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                                 }.getType();
                                 ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
                                 if (apiResult.getCode().intValue() == 0) {
-                                    Number num= (Number)apiResult.getData();
+                                    Number num = (Number) apiResult.getData();
                                     Integer userId = num.intValue();
-                                    SharedPreferences sharedPreferences= getSharedPreferences("data", Context.MODE_PRIVATE);
-                                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                                    editor.putString("userId", userId+"");
-                                    editor.commit();
-                                    Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent();
-                                    intent.setClass(context, IndexActivity.class);
-                                    startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
+//                                    SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
+//                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+//                                    editor.putString("userId", userId + "");
+//                                    editor.commit();
+//                                    Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+//                                    Intent intent = new Intent();
+//                                    intent.setClass(context, IndexActivity.class);
+//                                    startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
+                                    connectRong(userId);
                                 } else {
                                     Toast.makeText(LoginActivity.this, apiResult.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
@@ -134,5 +137,84 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                 break;
 
         }
+    }
+
+    private void connectRong(final Integer userId) {
+        SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
+        String token = sharedPreferences.getString("im_token", "");
+        if (token != null && !"".equals(token)) {
+            connect(token, userId);
+        } else {
+            OkHttpUtils
+                    .post()
+                    .url(Api.apiHost + Api.getToken)
+                    .addParams("userId", userId + "")
+                    .build()
+                    .execute(new StringCallback() {
+                        @Override
+                        public void onError(okhttp3.Call call, Exception e, int id) {
+                        }
+
+                        @Override
+                        public void onResponse(String response, int id) {
+                            java.lang.reflect.Type type = new TypeToken<ApiResult>() {
+                            }.getType();
+                            ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
+                            if (apiResult.getCode().intValue() == 0) {
+                                String token = apiResult.getData().toString();
+                                SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putString("im_token", token);
+                                editor.commit();
+                                connect(token, userId);
+                            } else {
+                                Toast.makeText(LoginActivity.this, apiResult.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                            login.setEnabled(true);
+                        }
+                    });
+        }
+
+    }
+
+    private void connect(final String token, final Integer userId) {
+        MainHandler.getInstance().post(new Runnable() {
+            @Override
+            public void run() {
+
+                RongIMClient.connect(token, new RongIMClient.ConnectCallback() {
+                    @Override
+                    public void onTokenIncorrect() {
+                        System.out.println("11111111111111111111111");
+                    }
+
+                    /**
+                     * 连接融云成功
+                     */
+                    @Override
+                    public void onSuccess(String userid) {
+                        Toast.makeText(LoginActivity.this, "22222222222222222222222", Toast.LENGTH_SHORT).show();
+                        SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("userId", userId + "");
+                        editor.commit();
+                        Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent();
+                        intent.setClass(context, IndexActivity.class);
+                        startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
+                    }
+
+                    /**
+                     * 连接融云失败
+                     */
+                    @Override
+                    public void onError(RongIMClient.ErrorCode errorCode) {
+
+                        System.out.println(errorCode.getMessage());
+
+                    }
+                });
+            }
+        });
     }
 }

@@ -9,8 +9,8 @@ public class Seeting {
     public static final String partner_ID = "1546763811";
 
     //融云APPID
-    public static final String RONG_APP_ID = "0vnjpoad0371z";
+    public static final String RONG_APP_ID = "p5tvi9dspesq4";
 
     //融云SECRET
-    public static final String RONG_APP_SECRET = "ixfYoIFUgX1";
+    public static final String RONG_APP_SECRET = "rwPRCQ0iA7";
 }

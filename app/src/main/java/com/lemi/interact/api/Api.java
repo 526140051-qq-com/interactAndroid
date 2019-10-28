@@ -4,9 +4,9 @@ public class Api {
 
 //    public static String apiHost = "http://3fox.wang/interactServer/";
 
-    public static String apiHost = "http://139.155.150.14/interactServer/";
+//    public static String apiHost = "http://139.155.150.14/interactServer/";
 
-//    public static String apiHost = "http://192.168.2.75:8081/";
+    public static String apiHost = "http://192.168.2.75:8081/";
 
     public static String h5Host = "http://web.cmbc.joylingame.com/#";
 
@@ -23,6 +23,10 @@ public class Api {
     public static String isChargeExpired = "user/isChargeExpired";
 
     public static String findUserById = "user/findUserById";
+
+    public static String getToken = "rong/getToken";
+
+    public static String findRoomById = "room/findRoomById";
 
 
 

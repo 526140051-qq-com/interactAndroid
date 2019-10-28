@@ -1,5 +1,6 @@
 package com.lemi.interact.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
@@ -24,11 +26,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.lemi.interact.MainActivity.REQ_CODE_FOR_REGISTER;
+
 public class RoomActivity extends AppCompatActivity implements View.OnClickListener{
 
     private RecyclerView recyclerView;
 
     private List<RoomResponse> roomList;
+
+    private ImageButton addRoomBtn;
+
+    private String mCategoryId;
+
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,10 +47,12 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
+        context = this;
         Intent intent = getIntent();
         String categoryId = intent.getStringExtra("categoryId");
         if (categoryId != null && !"".equals(categoryId)) {
             initData(categoryId);
+            mCategoryId = categoryId;
         }
 
     }
@@ -73,6 +85,9 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                 });
+
+        addRoomBtn = findViewById(R.id.add_room_btn);
+        addRoomBtn.setOnClickListener(this);
     }
 
 
@@ -91,5 +106,14 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
 
+        switch (v.getId()) {
+            case R.id.add_room_btn:
+                Intent intent = new Intent();
+                intent.setClass(context, AddRoomActivity.class);
+                intent.putExtra("categoryId", mCategoryId);
+                startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
+                finish();
+                break;
+        }
     }
 }
