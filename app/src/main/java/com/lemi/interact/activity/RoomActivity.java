@@ -2,6 +2,7 @@ package com.lemi.interact.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -36,8 +37,6 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
 
     private ImageButton addRoomBtn;
 
-    private String mCategoryId;
-
     private Context context;
 
     @Override
@@ -48,11 +47,10 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
             getSupportActionBar().hide();
         }
         context = this;
-        Intent intent = getIntent();
-        String categoryId = intent.getStringExtra("categoryId");
+        SharedPreferences sharedPreferences= getSharedPreferences("data", Context.MODE_PRIVATE);
+        String categoryId=sharedPreferences.getString("categoryId","");
         if (categoryId != null && !"".equals(categoryId)) {
             initData(categoryId);
-            mCategoryId = categoryId;
         }
 
     }
@@ -110,9 +108,7 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.add_room_btn:
                 Intent intent = new Intent();
                 intent.setClass(context, AddRoomActivity.class);
-                intent.putExtra("categoryId", mCategoryId);
                 startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
-                finish();
                 break;
         }
     }

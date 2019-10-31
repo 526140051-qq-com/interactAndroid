@@ -45,9 +45,8 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
 
     private String createUserId;
 
-    private String categoryId;
+    private Context context;
 
-    RongRTCRoom mRongRTCRoom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,11 +55,10 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
             getSupportActionBar().hide();
         }
         setContentView(R.layout.activity_personal);
-
+        context = this;
         Intent intent = getIntent();
         roomId = intent.getStringExtra("roomId");
         createUserId = intent.getStringExtra("createUserId");
-        categoryId = intent.getStringExtra("categoryId");
         init();
     }
 
@@ -100,7 +98,6 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
                     webView.goBack();
                 } else {
                     Intent intent = new Intent();
-                    intent.putExtra("categoryId", categoryId);
                     intent.setClass(this, RoomActivity.class);
                     startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
                     finish();
@@ -126,11 +123,13 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
     public class JsInteration {
         @JavascriptInterface
         public String joinRoom(String roomId) {
-            System.out.println(roomId);
+            SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
+            String userId = sharedPreferences.getString("userId", "");
             OkHttpUtils
                     .post()
-                    .url(Api.apiHost + Api.findRoomById)
-                    .addParams("roomId", roomId + "")
+                    .url(Api.apiHost + Api.joinRoom)
+                    .addParams("roomId", roomId)
+                    .addParams("userId", userId)
                     .build()
                     .execute(new StringCallback() {
                         @Override
@@ -148,33 +147,14 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
                                     java.lang.reflect.Type roomType = new TypeToken<Room>() {
                                     }.getType();
                                     Room room = MyUtils.getGson().fromJson(apiResult.getData().toString(), roomType);
-                                    RongRTCConfig.Builder configBuilder = new RongRTCConfig.Builder();
 
-                                    //将配置完成后的 RongRTCConfig Builder对象设置给 RongRTCCapture
-                                    RongRTCCapture.getInstance().setRTCConfig(configBuilder.build());
+                                    String roomID = room.getNum();
 
-                                    RongRTCEngine.getInstance().joinRoom(room.getNum(), new JoinRoomUICallBack() {
-                                        @Override
-                                        protected void onUiSuccess(RongRTCRoom rongRTCRoom) {
-                                            mRongRTCRoom = rongRTCRoom;
-                                            RongRTCCapture.getInstance().startCameraCapture();
-//                                            mLocalUser = rongRTCRoom.getLocalUser();
-//                                            RongRTCCapture.getInstance().setRongRTCVideoView(local); //设置本地预览视图
-//                                            RongRTCCapture.getInstance().startCameraCapture();       //开始采集数据
-//                                            setEventListener();                                      //设置监听
-//                                            addRemoteUsersView();
-//                                            subscribeAll();                                          //订阅资源
-//                                            publishDefaultStream();                                  //发布资源
-                                        }
-
-                                        @Override
-                                        protected void onUiFailed(RTCErrorCode rtcErrorCode) {
-                                            System.out.println(rtcErrorCode.getValue());
-                                        }
-
-
-                                    });
-
+                                    Intent intent = new Intent();
+                                    intent.putExtra("roomId", roomID);
+                                    intent.setClass(context, RoomInfoActivity.class);
+                                    startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
+                                    finish();
                                 }
 
 

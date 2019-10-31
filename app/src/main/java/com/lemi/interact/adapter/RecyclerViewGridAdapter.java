@@ -60,7 +60,6 @@ public class RecyclerViewGridAdapter extends RecyclerView.Adapter<RecyclerViewGr
                 intent.putExtra("categoryId", mCategoryId);
                 intent.setClass(mContext, PersonalActivity.class);
                 mAppCompatActivity.startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
-                mAppCompatActivity.finish();
             }
         });
         return gridViewHolder;

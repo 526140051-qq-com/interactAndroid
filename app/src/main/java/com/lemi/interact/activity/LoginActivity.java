@@ -193,7 +193,6 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                      */
                     @Override
                     public void onSuccess(String userid) {
-                        Toast.makeText(LoginActivity.this, "22222222222222222222222", Toast.LENGTH_SHORT).show();
                         SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putString("userId", userId + "");
@@ -202,6 +201,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                         Intent intent = new Intent();
                         intent.setClass(context, IndexActivity.class);
                         startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
+                        finish();
                     }
 
                     /**

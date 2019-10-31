@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "E:\\interactAndroid\\IMLib\\build\\intermediates\\res\\merged\\release\\drawable\\notification_icon_background.xml",
+        "source": "C:\\Users\\Administrator\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-26.1.0.aar\\ecbea552c9d947cc021bd0f97dbd3d55\\res\\drawable\\notification_icon_background.xml"
+    },
+    {
+        "merged": "E:\\interactAndroid\\IMLib\\build\\intermediates\\res\\merged\\release\\drawable\\notification_bg.xml",
+        "source": "C:\\Users\\Administrator\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-26.1.0.aar\\ecbea552c9d947cc021bd0f97dbd3d55\\res\\drawable\\notification_bg.xml"
+    },
+    {
+        "merged": "E:\\interactAndroid\\IMLib\\build\\intermediates\\res\\merged\\release\\drawable\\notification_bg_low.xml",
+        "source": "C:\\Users\\Administrator\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-26.1.0.aar\\ecbea552c9d947cc021bd0f97dbd3d55\\res\\drawable\\notification_bg_low.xml"
+    },
+    {
+        "merged": "E:\\interactAndroid\\IMLib\\build\\intermediates\\res\\merged\\release\\drawable\\notification_tile_bg.xml",
+        "source": "C:\\Users\\Administrator\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-26.1.0.aar\\ecbea552c9d947cc021bd0f97dbd3d55\\res\\drawable\\notification_tile_bg.xml"
+    }
+]

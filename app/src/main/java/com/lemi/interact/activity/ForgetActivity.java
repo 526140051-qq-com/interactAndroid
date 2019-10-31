@@ -150,6 +150,7 @@ public class ForgetActivity extends Activity implements View.OnClickListener {
                                     Intent intent = new Intent();
                                     intent.setClass(context, LoginActivity.class);
                                     startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
+                                    finish();
                                 } else {
                                     Toast.makeText(ForgetActivity.this, apiResult.getMessage(), Toast.LENGTH_SHORT).show();
                                 }

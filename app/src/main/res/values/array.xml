@@ -2,9 +2,7 @@
 <resources>
 
     <array name="ctype">
-        <item>全部</item>
-        <item>测试1</item>
-        <item>测试2</item>
-        <item>测试3</item>
+        <item>免费</item>
+        <item>付费</item>
     </array>
 </resources>

@@ -9,4 +9,6 @@
     <color name="login_out">#ff4c94ff</color>
     <color name="my_text_color">#ffc4c4c4</color>
     <color name="my_nick_name">#ff333333</color>
+    <color name="test">#7Fffffff</color>
+    <color name="black">#3B3B3B</color>
 </resources>

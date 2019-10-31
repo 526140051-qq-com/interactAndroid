@@ -28,7 +28,11 @@ public class Api {
 
     public static String findRoomById = "room/findRoomById";
 
+    public static String addRoom = "room/addRoom";
 
+    public static String joinRoom = "room/joinRoom";
+
+    public static String quitRoom = "room/quitRoom";
 
     public static String ticket = "/ticket";
 

@@ -248,6 +248,7 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
                         Intent intent = new Intent();
                         intent.setClass(context, IndexActivity.class);
                         startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
+                        finish();
                     }
 
                     /**

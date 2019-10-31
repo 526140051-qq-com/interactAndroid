@@ -19,16 +19,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:background="#00ffffff"
             android:layout_marginLeft="15dp"
-            android:src="@mipmap/back2"/>
+            android:background="#00ffffff"
+            android:src="@mipmap/back2" />
 
     </LinearLayout>
 
     <LinearLayout
-        android:layout_marginTop="150dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="150dp"
         android:background="#00000000"
         android:gravity="center">
 
@@ -36,27 +36,50 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textSize="24sp"
-            android:textColor="#ffffffff"
             android:text="@string/create_room"
-            />
+            android:textColor="#ffffffff"
+            android:textSize="24sp" />
 
     </LinearLayout>
 
     <LinearLayout
-        android:layout_marginTop="40dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
         android:background="#00000000"
         android:gravity="center">
 
-        <Spinner
+        <EditText
+            android:id="@+id/price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:entries="@array/ctype">       <!--通过entries属性指定一个下拉列表项，是一个数组资源-->
-        </Spinner>
-
+            android:hint="@string/price"
+            android:inputType="number"
+            android:paddingBottom="3dp"
+            android:paddingTop="3dp"
+            android:background="@drawable/add_room_edit_shape"
+            android:textColor="@color/text_color"
+            android:textSize="13sp" />
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:background="#00000000"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/add_room1_btn"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/add_room_button_shape"
+            android:gravity="center"
+            android:text="开始聊天"
+            android:textColor="@color/my_nick_name"
+            android:textSize="14sp" />
+    </LinearLayout>
 </LinearLayout>

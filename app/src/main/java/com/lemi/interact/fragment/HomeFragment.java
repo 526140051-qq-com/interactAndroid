@@ -98,31 +98,34 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("data", Context.MODE_PRIVATE);
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
         switch (v.getId()){
             case R.id.room_category_1:
+                editor.putString("categoryId", 1 + "");
+                editor.commit();
                 Intent intent1 = new Intent();
                 intent1.setClass(getActivity(), RoomActivity.class);
-                intent1.putExtra("categoryId",1+"");
                 startActivityForResult(intent1, REQ_CODE_FOR_REGISTER);
                 break;
 
             case R.id.room_category_2:
+                editor.putString("categoryId", 2 + "");
+                editor.commit();
                 Intent intent2 = new Intent();
                 intent2.setClass(getActivity(), RoomActivity.class);
-                intent2.putExtra("categoryId",2+"");
                 startActivityForResult(intent2, REQ_CODE_FOR_REGISTER);
                 break;
 
             case R.id.room_category_3:
+                editor.putString("categoryId", 3 + "");
+                editor.commit();
                 Intent intent3 = new Intent();
                 intent3.setClass(getActivity(), RoomActivity.class);
-                intent3.putExtra("categoryId",3+"");
                 startActivityForResult(intent3, REQ_CODE_FOR_REGISTER);
                 break;
 
             case R.id.room_category_4:
-                SharedPreferences sharedPreferences= getActivity().getSharedPreferences("data", Context.MODE_PRIVATE);
                 String userId=sharedPreferences.getString("userId","");
                 OkHttpUtils
                         .post()
@@ -140,7 +143,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                                 }.getType();
                                 ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
                                 if (apiResult.getCode().intValue() == 0) {
-
+                                    editor.putString("categoryId", 4 + "");
+                                    editor.commit();
                                     double res = -1;
                                     if (apiResult.getData() == null){
                                         res = 1;
@@ -154,7 +158,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                                     }else {
                                         Intent intent4 = new Intent();
                                         intent4.setClass(getActivity(), RoomActivity.class);
-                                        intent4.putExtra("categoryId",4+"");
                                         startActivityForResult(intent4, REQ_CODE_FOR_REGISTER);
                                     }
 
