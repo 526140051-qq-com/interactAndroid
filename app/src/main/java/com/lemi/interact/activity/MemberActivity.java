@@ -12,17 +12,15 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lemi.interact.R;
 import com.lemi.interact.api.Api;
-import com.lemi.interact.config.Seeting;
-import com.tencent.mm.opensdk.constants.ConstantsAPI;
-import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
+
+import org.json.JSONObject;
 
 import static com.lemi.interact.MainActivity.REQ_CODE_FOR_REGISTER;
 
@@ -34,6 +32,8 @@ public class MemberActivity extends AppCompatActivity implements View.OnClickLis
 
     private ImageView back;
 
+    private Context context;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +41,7 @@ public class MemberActivity extends AppCompatActivity implements View.OnClickLis
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
+        context = this;
         setContentView(R.layout.activity_member);
 
         init();
@@ -140,9 +141,27 @@ public class MemberActivity extends AppCompatActivity implements View.OnClickLis
 
     public class JsInteration {
         @JavascriptInterface
-        public String toWXPay(Integer chargeId) {
+        public void callWxPay(String json) {
 
-            return "";
+            IWXAPI api = WXAPIFactory.createWXAPI(context, "wxe3d1f34f56595a6e");
+
+            try {
+                JSONObject jsonObject = new JSONObject(json);
+
+                PayReq req = new PayReq();
+                req.appId = jsonObject.getString("appid");
+                req.partnerId = jsonObject.getString("partnerid");
+                req.prepayId = jsonObject.getString("prepayid");
+                req.nonceStr = jsonObject.getString("noncestr");
+                req.timeStamp = jsonObject.getString("timestamp");
+                req.packageValue = jsonObject.getString("package");
+                req.sign = jsonObject.getString("sign");
+//                        req.extData			= "app data";
+                api.sendReq(req);
+                Toast.makeText(context, "发起支付成功", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                Toast.makeText(context, "发起支付失败" + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

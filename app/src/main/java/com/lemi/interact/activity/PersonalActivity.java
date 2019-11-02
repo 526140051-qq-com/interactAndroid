@@ -20,8 +20,13 @@ import com.lemi.interact.api.Api;
 import com.lemi.interact.bean.ApiResult;
 import com.lemi.interact.bean.Room;
 import com.lemi.interact.util.MyUtils;
+import com.tencent.mm.opensdk.modelpay.PayReq;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+
+import org.json.JSONObject;
 
 import cn.rongcloud.rtc.RTCErrorCode;
 import cn.rongcloud.rtc.RongRTCConfig;
@@ -127,7 +132,7 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
             String userId = sharedPreferences.getString("userId", "");
             OkHttpUtils
                     .post()
-                    .url(Api.apiHost + Api.joinRoom)
+                    .url(Api.apiHost + Api.payForRoom)
                     .addParams("roomId", roomId)
                     .addParams("userId", userId)
                     .build()
@@ -143,6 +148,28 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
                             ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
                             if (apiResult.getCode().intValue() == 0) {
 
+                                if (apiResult.getData() != null){
+                                    IWXAPI api = WXAPIFactory.createWXAPI(context, "wxe3d1f34f56595a6e");
+                                    try {
+                                        JSONObject jsonObject = new JSONObject(apiResult.getData().toString());
+
+                                        PayReq req = new PayReq();
+                                        req.appId = jsonObject.getString("appid");
+                                        req.partnerId = jsonObject.getString("partnerid");
+                                        req.prepayId = jsonObject.getString("prepayid");
+                                        req.nonceStr = jsonObject.getString("noncestr");
+                                        req.timeStamp = jsonObject.getString("timestamp");
+                                        req.packageValue = jsonObject.getString("package");
+                                        req.sign = jsonObject.getString("sign");
+//                        req.extData			= "app data";
+                                        api.sendReq(req);
+                                        Toast.makeText(context, "发起支付成功", Toast.LENGTH_SHORT).show();
+                                    } catch (Exception e) {
+                                        Toast.makeText(context, "发起支付失败" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                            } else if(apiResult.getCode().intValue() == 2) {
                                 if (apiResult.getData()!=null){
                                     java.lang.reflect.Type roomType = new TypeToken<Room>() {
                                     }.getType();
@@ -156,11 +183,7 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
                                     startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
                                     finish();
                                 }
-
-
-
-
-                            } else {
+                            }else {
                                 Toast.makeText(PersonalActivity.this, apiResult.getMessage(), Toast.LENGTH_SHORT).show();
                             }
 
@@ -171,5 +194,6 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
             System.out.println(roomId);
             return "";
         }
+
     }
 }

@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <FrameLayout
         android:id="@+id/local_container"
+        android:layout_below="@+id/remotes"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="50dp">
-
+        android:layout_height="match_parent">
     </FrameLayout>
 
 
     <LinearLayout
         android:id="@+id/remotes"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@android:color/holo_green_light"
-        android:orientation="horizontal"/>
-
+        android:layout_above="@+id/local_container"
+        android:layout_width="125dp"
+        android:layout_height="168dp"
+        android:background="@drawable/shape_wait_tips"
+        android:orientation="vertical"/>
+    <!--android:background="@android:color/holo_green_light"-->
     <Button
         android:id="@+id/finish"
         android:layout_width="wrap_content"
@@ -26,4 +27,4 @@
         android:layout_gravity="bottom"
         android:text="finish"
         android:visibility="gone" />
-</FrameLayout>
+</RelativeLayout>

@@ -116,6 +116,7 @@ public class AddRoomActivity extends AppCompatActivity implements View.OnClickLi
                 if (pri == null || "".equals(pri)){
                     pri = "0";
                 }
+                addRoomBtn.setEnabled(false);
                 OkHttpUtils
                         .post()
                         .url(Api.apiHost + Api.addRoom)
@@ -154,7 +155,7 @@ public class AddRoomActivity extends AppCompatActivity implements View.OnClickLi
                                 } else {
                                     Toast.makeText(AddRoomActivity.this, apiResult.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
-
+                                addRoomBtn.setEnabled(true);
                             }
                         });
 

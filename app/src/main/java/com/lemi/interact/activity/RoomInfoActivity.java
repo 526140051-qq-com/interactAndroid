@@ -50,9 +50,9 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (getSupportActionBar() != null) {
-//            getSupportActionBar().hide();
-//        }
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
         setContentView(R.layout.activity_room_info);
 
         Intent intent = getIntent();
