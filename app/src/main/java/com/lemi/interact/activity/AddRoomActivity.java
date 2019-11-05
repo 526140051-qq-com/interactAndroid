@@ -25,9 +25,12 @@ import com.lemi.interact.api.Api;
 import com.lemi.interact.bean.ApiResult;
 import com.lemi.interact.bean.Room;
 import com.lemi.interact.util.FastBlur;
+import com.lemi.interact.util.MainHandler;
 import com.lemi.interact.util.MyUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+
+import io.rong.imlib.RongIMClient;
 
 import static com.lemi.interact.MainActivity.REQ_CODE_FOR_REGISTER;
 
@@ -101,7 +104,7 @@ public class AddRoomActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.add_room1_btn:
                 String pri = price.getText().toString();
                 SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
-                String userId = sharedPreferences.getString("userId", "");
+                final String userId = sharedPreferences.getString("userId", "");
                 Integer isFree = 1;
                 if (mcategoryId.equals("4")){
                     if (pri == null || "".equals(pri)){
@@ -129,7 +132,6 @@ public class AddRoomActivity extends AppCompatActivity implements View.OnClickLi
                             @Override
                             public void onError(okhttp3.Call call, Exception e, int id) {
                             }
-
                             @Override
                             public void onResponse(String response, int id) {
                                 java.lang.reflect.Type type = new TypeToken<ApiResult>() {
@@ -141,17 +143,9 @@ public class AddRoomActivity extends AppCompatActivity implements View.OnClickLi
                                         java.lang.reflect.Type roomType = new TypeToken<Room>() {
                                         }.getType();
                                         Room room = MyUtils.getGson().fromJson(apiResult.getData().toString(), roomType);
-
                                         String roomID = room.getNum();
-
-                                        Intent intent = new Intent();
-                                        intent.putExtra("roomId", roomID);
-                                        intent.setClass(context, RoomInfoActivity.class);
-                                        startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
-                                        finish();
-                                        Toast.makeText(AddRoomActivity.this, "创建房间成功", Toast.LENGTH_SHORT).show();
+                                        connectRong(roomID,userId);
                                     }
-
                                 } else {
                                     Toast.makeText(AddRoomActivity.this, apiResult.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
@@ -162,5 +156,60 @@ public class AddRoomActivity extends AppCompatActivity implements View.OnClickLi
 
                 break;
         }
+    }
+
+    private void connectRong(final String roomId, final String userId) {
+        OkHttpUtils
+                .post()
+                .url(Api.apiHost + Api.getToken)
+                .addParams("userId", userId + "")
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(okhttp3.Call call, Exception e, int id) {
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        java.lang.reflect.Type type = new TypeToken<ApiResult>() {
+                        }.getType();
+                        ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
+                        if (apiResult.getCode().intValue() == 0) {
+                            String token = apiResult.getData().toString();
+                            connect(roomId, token);
+                        } else {
+                            Toast.makeText(context, apiResult.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    private void connect(final String roomId, final String token) {
+        MainHandler.getInstance().post(new Runnable() {
+            @Override
+            public void run() {
+
+                RongIMClient.connect(token, new RongIMClient.ConnectCallback() {
+                    @Override
+                    public void onTokenIncorrect() {
+                    }
+
+                    @Override
+                    public void onSuccess(String userid) {
+                        Intent intent = new Intent();
+                        intent.putExtra("roomId", roomId);
+                        intent.setClass(context, RoomInfoActivity.class);
+                        startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
+                        finish();
+                        Toast.makeText(AddRoomActivity.this, "创建房间成功", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onError(RongIMClient.ErrorCode errorCode) {
+                        System.out.println(errorCode.getMessage());
+                    }
+                });
+            }
+        });
     }
 }

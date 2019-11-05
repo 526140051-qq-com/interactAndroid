@@ -166,16 +166,15 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
                                 if (apiResult.getCode().intValue() == 0) {
                                     Number num = (Number) apiResult.getData();
                                     Integer userId = num.intValue();
-                                    connectRong(userId);
-//                                    SharedPreferences sharedPreferences= getSharedPreferences("data", Context.MODE_PRIVATE);
-//                                    SharedPreferences.Editor editor = sharedPreferences.edit();
-//                                    editor.putString("userId", userId+"");
-//                                    editor.commit();
-//
-//                                    Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
-//                                    Intent intent = new Intent();
-//                                    intent.setClass(context, IndexActivity.class);
-//                                    startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
+                                    SharedPreferences sharedPreferences= getSharedPreferences("data", Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.putString("userId", userId+"");
+                                    editor.commit();
+
+                                    Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent();
+                                    intent.setClass(context, IndexActivity.class);
+                                    startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
                                 } else {
                                     Toast.makeText(RegisterActivity.this, apiResult.getMessage(), Toast.LENGTH_SHORT).show();
                                 }

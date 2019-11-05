@@ -13,4 +13,10 @@
     <dimen name="ConversationItemHeight">58dp</dimen>
     <dimen name="LargeAvatarSize">56dp</dimen>
 
+    <dimen name="eidt_textSize">14sp</dimen>
+    <dimen name="edit_height">35dp</dimen>
+    <dimen name="checkbox_spacing">16dp</dimen>
+    <dimen name="popup_window_xoff">45dp</dimen>
+    <dimen name="popup_width">100dp</dimen>
+    <dimen name="popup_height">60dp</dimen>
 </resources>

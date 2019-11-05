@@ -182,4 +182,19 @@
     <string name="paying">支付中</string>
     <string name="get_prepayid_succ">获取prepayid成功</string>
     <string name="get_prepayid_fail" formatted="false">获取prepayid失败，原因%s</string>
+
+
+    <!--rong-->
+    <string name="room_number">Room:</string>
+    <string name="connection_duration">Duration</string>
+    <string name="network_traffic">Traffic</string>
+    <string name="waiting_user_join">Waiting for attendees...</string>
+    <string name="white_board_pencil">pencil</string>
+    <string name="white_board_text">text</string>
+    <string name="white_board_eraser">eraser</string>
+    <string name="white_board_clear">clear</string>
+    <string name="white_board_add">add</string>
+    <string name="white_board_delete">delete</string>
+
+    <string name="user_video_custom">Customize video</string>
 </resources>

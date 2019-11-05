@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.lemi.interact">
+
+    <uses-sdk
+        android:minSdkVersion="16"
+        android:targetSdkVersion="23"
+        tools:overrideLibrary="com.herewhite.sdk" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -44,11 +50,7 @@
         <activity android:name=".activity.PersonalActivity" />
         <activity android:name=".activity.AddRoomActivity" />
         <activity android:name=".activity.RoomInfoActivity" />
-        <activity
-            android:name=".activity.WXEntryActivity"
-            android:exported="true"
-            android:launchMode="singleTop" />
-        <activity
+
             android:name=".activity.WXPayEntryActivity"
             android:exported="true"
             android:launchMode="singleTop" />
@@ -78,8 +80,6 @@
                 <action android:name="com.tencent.mm.plugin.openapi.Intent.ACTION_REFRESH_WXAPP" />
             </intent-filter>
         </receiver>
-
-        <activity android:name=".wxpay.WXPayActivity"></activity>
     </application>
 
 </manifest>

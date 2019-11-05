@@ -19,6 +19,7 @@ import com.lemi.interact.R;
 import com.lemi.interact.api.Api;
 import com.lemi.interact.bean.ApiResult;
 import com.lemi.interact.bean.Room;
+import com.lemi.interact.util.MainHandler;
 import com.lemi.interact.util.MyUtils;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
@@ -35,6 +36,7 @@ import cn.rongcloud.rtc.callback.JoinRoomUICallBack;
 import cn.rongcloud.rtc.callback.RongRTCResultUICallBack;
 import cn.rongcloud.rtc.room.RongRTCRoom;
 import cn.rongcloud.rtc.stream.local.RongRTCCapture;
+import io.rong.imlib.RongIMClient;
 
 import static com.lemi.interact.MainActivity.REQ_CODE_FOR_REGISTER;
 
@@ -127,9 +129,9 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
 
     public class JsInteration {
         @JavascriptInterface
-        public String joinRoom(String roomId) {
+        public void joinRoom(String roomId) {
             SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
-            String userId = sharedPreferences.getString("userId", "");
+            final String userId = sharedPreferences.getString("userId", "");
             OkHttpUtils
                     .post()
                     .url(Api.apiHost + Api.payForRoom)
@@ -148,7 +150,7 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
                             ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
                             if (apiResult.getCode().intValue() == 0) {
 
-                                if (apiResult.getData() != null){
+                                if (apiResult.getData() != null) {
                                     IWXAPI api = WXAPIFactory.createWXAPI(context, "wxe3d1f34f56595a6e");
                                     try {
                                         JSONObject jsonObject = new JSONObject(apiResult.getData().toString());
@@ -161,7 +163,6 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
                                         req.timeStamp = jsonObject.getString("timestamp");
                                         req.packageValue = jsonObject.getString("package");
                                         req.sign = jsonObject.getString("sign");
-//                        req.extData			= "app data";
                                         api.sendReq(req);
                                         Toast.makeText(context, "发起支付成功", Toast.LENGTH_SHORT).show();
                                     } catch (Exception e) {
@@ -169,31 +170,74 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
                                     }
                                 }
 
-                            } else if(apiResult.getCode().intValue() == 2) {
-                                if (apiResult.getData()!=null){
+                            } else if (apiResult.getCode().intValue() == 2) {
+                                if (apiResult.getData() != null) {
                                     java.lang.reflect.Type roomType = new TypeToken<Room>() {
                                     }.getType();
                                     Room room = MyUtils.getGson().fromJson(apiResult.getData().toString(), roomType);
-
                                     String roomID = room.getNum();
-
-                                    Intent intent = new Intent();
-                                    intent.putExtra("roomId", roomID);
-                                    intent.setClass(context, RoomInfoActivity.class);
-                                    startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
-                                    finish();
+                                    connectRong(roomID, userId);
                                 }
-                            }else {
+                            } else {
                                 Toast.makeText(PersonalActivity.this, apiResult.getMessage(), Toast.LENGTH_SHORT).show();
                             }
 
                         }
                     });
-
-
-            System.out.println(roomId);
-            return "";
         }
 
+        private void connectRong(final String roomId, final String userId) {
+            OkHttpUtils
+                    .post()
+                    .url(Api.apiHost + Api.getToken)
+                    .addParams("userId", userId + "")
+                    .build()
+                    .execute(new StringCallback() {
+                        @Override
+                        public void onError(okhttp3.Call call, Exception e, int id) {
+                        }
+
+                        @Override
+                        public void onResponse(String response, int id) {
+                            java.lang.reflect.Type type = new TypeToken<ApiResult>() {
+                            }.getType();
+                            ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
+                            if (apiResult.getCode().intValue() == 0) {
+                                String token = apiResult.getData().toString();
+                                connect(roomId, token);
+                            } else {
+                                Toast.makeText(context, apiResult.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        }
+
+        private void connect(final String roomId, final String token) {
+            MainHandler.getInstance().post(new Runnable() {
+                @Override
+                public void run() {
+
+                    RongIMClient.connect(token, new RongIMClient.ConnectCallback() {
+                        @Override
+                        public void onTokenIncorrect() {
+                        }
+
+                        @Override
+                        public void onSuccess(String userid) {
+                            Intent intent = new Intent();
+                            intent.putExtra("roomId", roomId);
+                            intent.setClass(context, RoomInfoActivity.class);
+                            startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
+                            finish();
+                        }
+
+                        @Override
+                        public void onError(RongIMClient.ErrorCode errorCode) {
+                            System.out.println(errorCode.getMessage());
+                        }
+                    });
+                }
+            });
+        }
     }
 }

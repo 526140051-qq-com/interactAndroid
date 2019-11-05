@@ -108,15 +108,14 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                                 if (apiResult.getCode().intValue() == 0) {
                                     Number num = (Number) apiResult.getData();
                                     Integer userId = num.intValue();
-//                                    SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
-//                                    SharedPreferences.Editor editor = sharedPreferences.edit();
-//                                    editor.putString("userId", userId + "");
-//                                    editor.commit();
-//                                    Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
-//                                    Intent intent = new Intent();
-//                                    intent.setClass(context, IndexActivity.class);
-//                                    startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
-                                    connectRong(userId);
+                                    SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.putString("userId", userId + "");
+                                    editor.commit();
+                                    Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent();
+                                    intent.setClass(context, IndexActivity.class);
+                                    startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
                                 } else {
                                     Toast.makeText(LoginActivity.this, apiResult.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
@@ -185,7 +184,6 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                 RongIMClient.connect(token, new RongIMClient.ConnectCallback() {
                     @Override
                     public void onTokenIncorrect() {
-                        System.out.println("11111111111111111111111");
                     }
 
                     /**

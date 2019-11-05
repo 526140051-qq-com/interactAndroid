@@ -23,4 +23,36 @@
     <color name="semitransparent">#80000000</color>
     <color name="lightransparent">#a0000000</color>
     <color name="transparent">#00000000</color>
+
+
+    <color name="colorWhite">#FFFFFF</color>
+
+    <color name="blink_black">#000000</color>
+    <color name="blink_transparent">#a0000000</color>
+    <color name="blink_green">#006400</color>
+    <color name="blink_grey">#CFCFCE</color>
+    <color name="blink_text_grey">#333333</color>
+    <color name="blink_launcher_grey">#666666</color>
+    <color name="blink_text_green">#33CCFF</color>
+    <color name="blink_text_green1">#008B00</color>
+    <color name="blink_blue">#3A83F5</color>
+    <color name="blink_blue2">#1C86EE</color>
+    <color name="blink_grey1">#8C8C8C</color>
+    <color name="blink_orange">#FFA07A</color>
+    <color name="blink_orange1">#FF6347</color>
+    <color name="blink_yellow">#EEC900</color>
+    <color name="blink_yellow1">#EEE685</color>
+    <color name="dialog_bg_color">#00ffffff</color>
+    <color name="blink_divider">#AAAAAA</color>
+    <color name="blink_text_white">#FFFFFF</color>
+    <color name="blink_rad">#ffff0000</color>
+    <color name="white_board_pencil_color_red">#ff0000</color>
+    <color name="white_board_pencil_color_orange">#FFA500</color>
+    <color name="white_board_pencil_color_yellow">#FFFF00</color>
+    <color name="white_board_pencil_color_blue">#0000FF</color>
+    <color name="white_board_pencil_color_cyan">#00FFFF</color>
+    <color name="white_board_pencil_color_green">#008000</color>
+    <color name="white_board_pencil_color_black">#000000</color>
+    <color name="white_board_pencil_color_purple">#800080</color>
+    <color name="white_board_pencil_color_gray">#808080</color>
 </resources>

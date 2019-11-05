@@ -17,6 +17,7 @@ import com.lemi.interact.R;
 import com.lemi.interact.api.Api;
 import com.lemi.interact.bean.ApiResult;
 import com.lemi.interact.bean.Room;
+import com.lemi.interact.util.MainHandler;
 import com.lemi.interact.util.MyUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -54,24 +55,23 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
             getSupportActionBar().hide();
         }
         setContentView(R.layout.activity_room_info);
-
         Intent intent = getIntent();
         mRoomId = intent.getStringExtra("roomId");
 
         initView();
-//        getActionBar().setTitle("房间号: " + mRoomId);
-        joinRoom();
+
     }
 
     private void initView() {
         local = RongRTCEngine.getInstance().createVideoView(this);
         local.setOnClickListener(this);
-        localContainer = (FrameLayout) findViewById(R.id.local_container);
+        localContainer = findViewById(R.id.local_container);
         localContainer.addView(local);
-        remotes = (LinearLayout) findViewById(R.id.remotes);
-        button = (Button) findViewById(R.id.finish);
+        remotes = findViewById(R.id.remotes);
+        button = findViewById(R.id.finish);
         button.setVisibility(View.GONE);
         button.setOnClickListener(this);
+        joinRoom();
     }
 
     /**
@@ -141,18 +141,6 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
         super.onDestroy();
         removeListener();
         quitRoom();
-//        RongRTCEngine.getInstance().quitRoom(mRoomId, new RongRTCResultUICallBack() {
-//            @Override
-//            public void onUiSuccess() {
-//                Toast.makeText(RoomInfoActivity.this, "离开房间成功", Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onUiFailed(RTCErrorCode rtcErrorCode) {
-//                Toast.makeText(RoomInfoActivity.this, "离开房间失败", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
     }
 
     private void addRemoteUsersView() {
@@ -212,7 +200,7 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
     private RongRTCVideoView getNewVideoView() {
         RongRTCVideoView videoView = RongRTCEngine.getInstance().createVideoView(this);
         videoView.setOnClickListener(this);
-        remotes.addView(videoView, new LinearLayout.LayoutParams(remotes.getHeight(), remotes.getHeight()));
+        remotes.addView(videoView, new LinearLayout.LayoutParams(remotes.getWidth(), remotes.getHeight()));
         remotes.bringToFront();
         return videoView;
     }

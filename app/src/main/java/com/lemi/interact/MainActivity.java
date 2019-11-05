@@ -39,7 +39,10 @@ public class MainActivity extends Activity {
             startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
             finish();
         }else {
-            connectRong(Integer.parseInt(userId));
+            Intent intent = new Intent();
+            intent.setClass(context, IndexActivity.class);
+            startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
+            finish();
         }
 
     }
