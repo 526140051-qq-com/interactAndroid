@@ -100,30 +100,30 @@
             android:textSize="14sp" />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:gravity="center"
-        android:orientation="horizontal">
+    <!--<LinearLayout-->
+        <!--android:layout_width="250dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:layout_marginTop="20dp"-->
+        <!--android:gravity="center"-->
+        <!--android:orientation="horizontal">-->
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:src="@mipmap/icon_card" />
+        <!--<ImageView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center_vertical"-->
+            <!--android:src="@mipmap/icon_card" />-->
 
-        <EditText
-            android:id="@+id/register_card"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:hint="@string/card_hint"
-            android:paddingBottom="3dp"
-            android:paddingTop="3dp"
-            android:textColor="@color/text_color"
-            android:textSize="14sp" />
-    </LinearLayout>
+        <!--<EditText-->
+            <!--android:id="@+id/register_card"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="40dp"-->
+            <!--android:hint="@string/card_hint"-->
+            <!--android:paddingBottom="3dp"-->
+            <!--android:paddingTop="3dp"-->
+            <!--android:textColor="@color/text_color"-->
+            <!--android:textSize="14sp" />-->
+    <!--</LinearLayout>-->
 
     <LinearLayout
         android:layout_width="match_parent"

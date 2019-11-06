@@ -63,8 +63,8 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
         code = findViewById(R.id.register_code);
         code.setHintTextColor(Color.parseColor("#a5ffffff"));
 
-        card = findViewById(R.id.register_card);
-        card.setHintTextColor(Color.parseColor("#a5ffffff"));
+//        card = findViewById(R.id.register_card);
+//        card.setHintTextColor(Color.parseColor("#a5ffffff"));
 
         codeBtn = findViewById(R.id.register_code_btn);
         codeBtn.setOnClickListener(this);
@@ -139,10 +139,10 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
                     Toast.makeText(RegisterActivity.this, "请输入密码", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (idCard == null || "".equals(idCard.trim())) {
-                    Toast.makeText(RegisterActivity.this, "请输入身份证", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+//                if (idCard == null || "".equals(idCard.trim())) {
+//                    Toast.makeText(RegisterActivity.this, "请输入身份证", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
 
                 registerBtn.setEnabled(false);
                 OkHttpUtils

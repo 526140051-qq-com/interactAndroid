@@ -92,6 +92,7 @@ public class RecyclerViewGridAdapter extends RecyclerView.Adapter<RecyclerViewGr
         private final MyImgView itemJoinPhoto;
         private final TextView itemJoinNickName;
         private final ImageView itemJoinGender;
+        private final TextView distance;
         View provinceView;
 
 
@@ -105,11 +106,18 @@ public class RecyclerViewGridAdapter extends RecyclerView.Adapter<RecyclerViewGr
             itemJoinPhoto = itemView.findViewById(R.id.item_join_photo);
             itemJoinNickName = itemView.findViewById(R.id.item_join_nick_name);
             itemJoinGender = itemView.findViewById(R.id.item_join_gender);
+            distance = itemView.findViewById(R.id.distance);
         }
 
         public void setData(RoomResponse data) {
             if (data.getNum() != null) {
                 itemRoomNum.setText("房间号：" + data.getNum());
+            }
+
+            if (data.getDistance() != null){
+                distance.setText(Math.ceil(data.getDistance()/1000) + "km");
+            }else {
+                distance.setText("0km");
             }
 
             if (data.getPhoto() != null && !"".equals(data.getPhoto())) {

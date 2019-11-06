@@ -1,13 +1,19 @@
 package com.lemi.interact.activity;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Location;
+import android.location.LocationManager;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -34,7 +40,7 @@ import io.rong.imlib.RongIMClient;
 
 import static com.lemi.interact.MainActivity.REQ_CODE_FOR_REGISTER;
 
-public class AddRoomActivity extends AppCompatActivity implements View.OnClickListener{
+public class AddRoomActivity extends AppCompatActivity implements View.OnClickListener {
 
     LinearLayout linearLayout;
 
@@ -48,6 +54,13 @@ public class AddRoomActivity extends AppCompatActivity implements View.OnClickLi
 
     EditText price;
 
+    private LocationManager lm;
+
+    private Double longitude;
+
+    private Double latitude;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,8 +70,8 @@ public class AddRoomActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         context = this;
-        SharedPreferences sharedPreferences= getSharedPreferences("data", Context.MODE_PRIVATE);
-        String categoryId=sharedPreferences.getString("categoryId","");
+        SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
+        String categoryId = sharedPreferences.getString("categoryId", "");
         mcategoryId = categoryId;
 
         linearLayout = findViewById(R.id.add_room_ll);
@@ -74,10 +87,32 @@ public class AddRoomActivity extends AppCompatActivity implements View.OnClickLi
                     }
                 });
 
+        lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (!isGpsAble(lm)) {
+            Toast.makeText(AddRoomActivity.this, "请打开手机定位功能", Toast.LENGTH_SHORT).show();
+            openGPS2();
+        }
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        //        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Location location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        if (location != null){
+            longitude = location.getLongitude();
+            latitude = location.getLatitude();
+        }
         init();
     }
 
-    private void init(){
+    private void init() {
         addRoomBack = findViewById(R.id.add_room_back);
         addRoomBack.setOnClickListener(this);
 
@@ -85,9 +120,9 @@ public class AddRoomActivity extends AppCompatActivity implements View.OnClickLi
         addRoomBtn.setOnClickListener(this);
 
         price = findViewById(R.id.price);
-        if (mcategoryId.equals("4")){
+        if (mcategoryId.equals("4")) {
             price.setEnabled(false);
-        }else {
+        } else {
             price.setEnabled(true);
         }
     }
@@ -106,17 +141,17 @@ public class AddRoomActivity extends AppCompatActivity implements View.OnClickLi
                 SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
                 final String userId = sharedPreferences.getString("userId", "");
                 Integer isFree = 1;
-                if (mcategoryId.equals("4")){
-                    if (pri == null || "".equals(pri)){
+                if (mcategoryId.equals("4")) {
+                    if (pri == null || "".equals(pri)) {
                         isFree = 1;
-                    }else if (Integer.parseInt(pri) == 0){
+                    } else if (Integer.parseInt(pri) == 0) {
                         isFree = 1;
-                    }else {
+                    } else {
                         isFree = 2;
                     }
                 }
 
-                if (pri == null || "".equals(pri)){
+                if (pri == null || "".equals(pri)) {
                     pri = "0";
                 }
                 addRoomBtn.setEnabled(false);
@@ -127,11 +162,14 @@ public class AddRoomActivity extends AppCompatActivity implements View.OnClickLi
                         .addParams("categoryId", mcategoryId)
                         .addParams("isFree", isFree + "")
                         .addParams("price", pri)
+                        .addParams("longitude",longitude + "")
+                        .addParams("latitude", latitude + "")
                         .build()
                         .execute(new StringCallback() {
                             @Override
                             public void onError(okhttp3.Call call, Exception e, int id) {
                             }
+
                             @Override
                             public void onResponse(String response, int id) {
                                 java.lang.reflect.Type type = new TypeToken<ApiResult>() {
@@ -139,12 +177,12 @@ public class AddRoomActivity extends AppCompatActivity implements View.OnClickLi
                                 ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
                                 if (apiResult.getCode().intValue() == 0) {
 
-                                    if (apiResult.getData()!=null){
+                                    if (apiResult.getData() != null) {
                                         java.lang.reflect.Type roomType = new TypeToken<Room>() {
                                         }.getType();
                                         Room room = MyUtils.getGson().fromJson(apiResult.getData().toString(), roomType);
                                         String roomID = room.getNum();
-                                        connectRong(roomID,userId);
+                                        connectRong(roomID, userId);
                                     }
                                 } else {
                                     Toast.makeText(AddRoomActivity.this, apiResult.getMessage(), Toast.LENGTH_SHORT).show();
@@ -211,5 +249,14 @@ public class AddRoomActivity extends AppCompatActivity implements View.OnClickLi
                 });
             }
         });
+    }
+
+    private boolean isGpsAble(LocationManager lm){
+        return lm.isProviderEnabled(LocationManager.GPS_PROVIDER)? true:false;
+    }
+
+    private void openGPS2() {
+        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+        startActivityForResult(intent, 0);
     }
 }
