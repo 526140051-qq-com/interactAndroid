@@ -22,8 +22,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="10dp"
             android:gravity="center"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <com.lemi.interact.view.MyImgView
@@ -39,6 +39,7 @@
                 android:paddingTop="5dp"
                 android:paddingBottom="15dp"
                 android:gravity="center"
+                android:layout_gravity="center"
                 android:orientation="horizontal">
 
                 <TextView
@@ -54,21 +55,22 @@
             </LinearLayout>
 
         </LinearLayout>
-
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:orientation="vertical">
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="15dp"
-            android:gravity="center"
-            android:layout_gravity="center"
             android:src="@mipmap/lianjie" />
-
+        </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:paddingBottom="15dp"
             android:gravity="center"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <com.lemi.interact.view.MyImgView

@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -14,8 +16,14 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
@@ -43,6 +51,10 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
 
     private ImageButton addRoomBtn;
 
+    private ImageView roomListBack;
+
+    private EditText search;
+
     private Context context;
 
     private LocationManager lm;
@@ -50,6 +62,9 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
     private Double longitude;
 
     private Double latitude;
+
+    private String categoryId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +100,7 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         SharedPreferences sharedPreferences= getSharedPreferences("data", Context.MODE_PRIVATE);
-        String categoryId=sharedPreferences.getString("categoryId","");
+        categoryId=sharedPreferences.getString("categoryId","");
         if (categoryId != null && !"".equals(categoryId)) {
             initData(categoryId);
         }
@@ -125,8 +140,105 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
 
         addRoomBtn = (ImageButton) findViewById(R.id.add_room_btn);
         addRoomBtn.setOnClickListener(this);
-    }
 
+        roomListBack = (ImageView) findViewById(R.id.room_list_back);
+        roomListBack.setOnClickListener(this);
+
+        search = (EditText) findViewById(R.id.search);
+        search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            //输入时的调用
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                mHandler.removeCallbacks(mRunnable);
+
+                mHandler.postDelayed(mRunnable, 1000);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+    }
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+        }
+    };
+
+    private Runnable mRunnable = new Runnable() {
+        @Override
+        public void run() {
+            mHandler.sendEmptyMessage(1);
+            String num = search.getText().toString();
+            if (num!=null&&!"".equals(num.trim())){
+                OkHttpUtils
+                        .post()
+                        .url(Api.apiHost + Api.findRoom)
+                        .addParams("categoryId", categoryId)
+                        .addParams("longitude", longitude + "")
+                        .addParams("latitude", latitude + "")
+                        .addParams("num",num)
+                        .build()
+                        .execute(new StringCallback() {
+                            @Override
+                            public void onError(okhttp3.Call call, Exception e, int id) {
+                            }
+
+                            @Override
+                            public void onResponse(String response, int id) {
+                                java.lang.reflect.Type type = new TypeToken<ApiResult>() {
+                                }.getType();
+                                ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
+                                if (apiResult.getCode().intValue() == 0) {
+                                    String jsonString = MyUtils.getGson().toJson(apiResult.getData());
+                                    RoomResponse[] array = MyUtils.getGson().fromJson(jsonString, RoomResponse[].class);
+                                    roomList = Arrays.asList(array);
+                                    loadgrideDate(false, true,categoryId);
+                                } else {
+                                    Toast.makeText(RoomActivity.this, apiResult.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+            }else {
+                OkHttpUtils
+                        .post()
+                        .url(Api.apiHost + Api.findRoom)
+                        .addParams("categoryId", categoryId)
+                        .addParams("longitude", longitude + "")
+                        .addParams("latitude", latitude + "")
+                        .build()
+                        .execute(new StringCallback() {
+                            @Override
+                            public void onError(okhttp3.Call call, Exception e, int id) {
+                            }
+
+                            @Override
+                            public void onResponse(String response, int id) {
+                                java.lang.reflect.Type type = new TypeToken<ApiResult>() {
+                                }.getType();
+                                ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
+                                if (apiResult.getCode().intValue() == 0) {
+                                    String jsonString = MyUtils.getGson().toJson(apiResult.getData());
+                                    RoomResponse[] array = MyUtils.getGson().fromJson(jsonString, RoomResponse[].class);
+                                    roomList = Arrays.asList(array);
+                                    loadgrideDate(false, true,categoryId);
+                                } else {
+                                    Toast.makeText(RoomActivity.this, apiResult.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+            }
+        }
+    };
 
     private void loadgrideDate(Boolean isversion, Boolean orientation,String categoryId) {
         recyclerView.addItemDecoration(new SpacesItemDecoration(5, 5));
@@ -148,6 +260,12 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
                 Intent intent = new Intent();
                 intent.setClass(context, AddRoomActivity.class);
                 startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
+                break;
+            case R.id.room_list_back:
+                Intent intent1 = new Intent();
+                intent1.setClass(this, IndexActivity.class);
+                startActivityForResult(intent1, REQ_CODE_FOR_REGISTER);
+                finish();
                 break;
         }
     }

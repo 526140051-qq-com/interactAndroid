@@ -44,12 +44,15 @@ public class AdverInfoActivity extends AppCompatActivity implements View.OnClick
         Intent intent = getIntent();
         adverId = intent.getStringExtra("adverId");
 
+        SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
+        String userId = sharedPreferences.getString("userId", "");
+
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setDomStorageEnabled(true);
         webView.getSettings().setDatabaseEnabled(true);
         webView.getSettings().setDatabasePath(getApplicationContext().getCacheDir().getAbsolutePath());
         String ua = webView.getSettings().getUserAgentString();
-        webView.getSettings().setUserAgentString(ua + ";adverId=" + adverId);
+        webView.getSettings().setUserAgentString(ua + ";userId=" + userId);
         webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setUseWideViewPort(true);
@@ -59,7 +62,7 @@ public class AdverInfoActivity extends AppCompatActivity implements View.OnClick
         }
         webView.addJavascriptInterface(new JsInteration(), "android");
         webView.setWebViewClient(new MyWebViewClient());
-        String url = Api.h5Host + Api.adverInfo;
+        String url = Api.h5Host + Api.adverInfo + "/" + adverId;
         webView.loadUrl(url);
 
         back = (ImageView) findViewById(R.id.adverinfo_back);
@@ -96,6 +99,10 @@ public class AdverInfoActivity extends AppCompatActivity implements View.OnClick
     }
 
     public class JsInteration {
+        @JavascriptInterface
+        public String toWXPay(Integer chargeId) {
 
+            return "";
+        }
     }
 }
