@@ -48,7 +48,7 @@ public class MemberActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void init() {
-        webView = findViewById(R.id.member_web);
+        webView = (WebView) findViewById(R.id.member_web);
 
         SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
         String userId = sharedPreferences.getString("userId", "");
@@ -71,7 +71,7 @@ public class MemberActivity extends AppCompatActivity implements View.OnClickLis
         String url = Api.h5Host + Api.ticket;
         webView.loadUrl(url);
 
-        back = findViewById(R.id.member_back);
+        back = (ImageView) findViewById(R.id.member_back);
         back.setOnClickListener(this);
     }
 

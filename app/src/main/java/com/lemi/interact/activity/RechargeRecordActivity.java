@@ -38,7 +38,7 @@ public class RechargeRecordActivity extends AppCompatActivity  implements View.O
     }
 
     private void init() {
-        webView = findViewById(R.id.recharge_web);
+        webView = (WebView) findViewById(R.id.recharge_web);
 
         SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
         String userId = sharedPreferences.getString("userId", "");
@@ -61,7 +61,7 @@ public class RechargeRecordActivity extends AppCompatActivity  implements View.O
         String url = Api.h5Host + Api.rechargeRecord;
         webView.loadUrl(url);
 
-        back = findViewById(R.id.recharge_back);
+        back = (ImageView) findViewById(R.id.recharge_back);
         back.setOnClickListener(this);
     }
 

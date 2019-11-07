@@ -65,10 +65,10 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
     private void initView() {
         local = RongRTCEngine.getInstance().createVideoView(this);
         local.setOnClickListener(this);
-        localContainer = findViewById(R.id.local_container);
+        localContainer = (FrameLayout) findViewById(R.id.local_container);
         localContainer.addView(local);
-        remotes = findViewById(R.id.remotes);
-        button = findViewById(R.id.finish);
+        remotes = (LinearLayout) findViewById(R.id.remotes);
+        button = (Button) findViewById(R.id.finish);
         button.setVisibility(View.GONE);
         button.setOnClickListener(this);
         joinRoom();

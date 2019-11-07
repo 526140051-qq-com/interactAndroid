@@ -38,7 +38,7 @@ public class WithdrawRecordActivity extends AppCompatActivity implements View.On
     }
 
     private void init() {
-        webView = findViewById(R.id.withdraw_web);
+        webView = (WebView) findViewById(R.id.withdraw_web);
 
         SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
         String userId = sharedPreferences.getString("userId", "");
@@ -61,7 +61,7 @@ public class WithdrawRecordActivity extends AppCompatActivity implements View.On
         String url = Api.h5Host + Api.withdrawRecord;
         webView.loadUrl(url);
 
-        back = findViewById(R.id.withdraw_back);
+        back = (ImageView) findViewById(R.id.withdraw_back);
         back.setOnClickListener(this);
     }
 

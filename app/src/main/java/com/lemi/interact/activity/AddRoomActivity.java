@@ -7,8 +7,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationManager;
@@ -21,7 +19,6 @@ import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -74,7 +71,7 @@ public class AddRoomActivity extends AppCompatActivity implements View.OnClickLi
         String categoryId = sharedPreferences.getString("categoryId", "");
         mcategoryId = categoryId;
 
-        linearLayout = findViewById(R.id.add_room_ll);
+        linearLayout = (LinearLayout) findViewById(R.id.add_room_ll);
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
                 R.mipmap.bg_login);
         final Bitmap bitmap1 = FastBlur.fastblur(this, bitmap, 15);
@@ -103,9 +100,11 @@ public class AddRoomActivity extends AppCompatActivity implements View.OnClickLi
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        //        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        Location location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        if (location != null){
+        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if(location == null){
+            location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        }
+        if (location != null) {
             longitude = location.getLongitude();
             latitude = location.getLatitude();
         }
@@ -113,13 +112,13 @@ public class AddRoomActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void init() {
-        addRoomBack = findViewById(R.id.add_room_back);
+        addRoomBack = (ImageButton) findViewById(R.id.add_room_back);
         addRoomBack.setOnClickListener(this);
 
-        addRoomBtn = findViewById(R.id.add_room1_btn);
+        addRoomBtn = (Button) findViewById(R.id.add_room1_btn);
         addRoomBtn.setOnClickListener(this);
 
-        price = findViewById(R.id.price);
+        price = (EditText) findViewById(R.id.price);
         if (mcategoryId.equals("4")) {
             price.setEnabled(false);
         } else {
@@ -162,7 +161,7 @@ public class AddRoomActivity extends AppCompatActivity implements View.OnClickLi
                         .addParams("categoryId", mcategoryId)
                         .addParams("isFree", isFree + "")
                         .addParams("price", pri)
-                        .addParams("longitude",longitude + "")
+                        .addParams("longitude", longitude + "")
                         .addParams("latitude", latitude + "")
                         .build()
                         .execute(new StringCallback() {
@@ -251,8 +250,8 @@ public class AddRoomActivity extends AppCompatActivity implements View.OnClickLi
         });
     }
 
-    private boolean isGpsAble(LocationManager lm){
-        return lm.isProviderEnabled(LocationManager.GPS_PROVIDER)? true:false;
+    private boolean isGpsAble(LocationManager lm) {
+        return lm.isProviderEnabled(LocationManager.GPS_PROVIDER) ? true : false;
     }
 
     private void openGPS2() {

@@ -70,7 +70,7 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void init() {
-        webView = findViewById(R.id.personal_web);
+        webView = (WebView) findViewById(R.id.personal_web);
 
         SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
         String userId = sharedPreferences.getString("userId", "");
@@ -93,7 +93,7 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
         String url = Api.h5Host + Api.personal + "/" + roomId + "/" + createUserId;
         webView.loadUrl(url);
 
-        back = findViewById(R.id.personal_back);
+        back = (ImageView) findViewById(R.id.personal_back);
         back.setOnClickListener(this);
     }
 

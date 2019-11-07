@@ -75,8 +75,10 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-//        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        Location location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if(location == null){
+            location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        }
         if (location != null){
             longitude = location.getLongitude();
             latitude = location.getLatitude();
@@ -92,7 +94,7 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
 
 
     private void initData(final String categoryId) {
-        recyclerView = findViewById(R.id.recyler_view);
+        recyclerView = (RecyclerView) findViewById(R.id.recyler_view);
         OkHttpUtils
                 .post()
                 .url(Api.apiHost + Api.findRoom)
@@ -121,7 +123,7 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 });
 
-        addRoomBtn = findViewById(R.id.add_room_btn);
+        addRoomBtn = (ImageButton) findViewById(R.id.add_room_btn);
         addRoomBtn.setOnClickListener(this);
     }
 

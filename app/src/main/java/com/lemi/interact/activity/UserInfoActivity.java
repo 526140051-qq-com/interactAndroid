@@ -38,7 +38,7 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void init() {
-        webView = findViewById(R.id.userinfo_web);
+        webView = (WebView) findViewById(R.id.userinfo_web);
 
         SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
         String userId = sharedPreferences.getString("userId", "");
@@ -61,7 +61,7 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
         String url = Api.h5Host + Api.edit;
         webView.loadUrl(url);
 
-        back = findViewById(R.id.userinfo_back);
+        back = (ImageView) findViewById(R.id.userinfo_back);
         back.setOnClickListener(this);
     }
 
