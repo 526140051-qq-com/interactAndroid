@@ -2,10 +2,6 @@ package com.lemi.interact.api;
 
 public class Api {
 
-//    public static String apiHost = "http://3fox.wang/interactServer/";
-
-//    public static String apiHost = "http://192.168.0.176:8080/";
-
     public static String apiHost = "http://47.104.192.82:8080/";
 
     public static String h5Host = "http://web.cmbc.joylingame.com/#";
@@ -40,10 +36,16 @@ public class Api {
 
     public static String edit = "/user/edit";
 
+    public static String adverInfo = "/user/edit";
+
     public static String rechargeRecord = "/user/recharge/record";
 
     public static String withdrawRecord = "/user/withdraw/record";
 
     public static String personal = "/personal";
+
+    public static String findAppVideoUrl = "/gift/findAppVideoUrl";
+
+    public static String selectAdvertisement = "/adminManager/selectAdvertisement";
 
 }

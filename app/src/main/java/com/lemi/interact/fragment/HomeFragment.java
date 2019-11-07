@@ -4,13 +4,16 @@ package com.lemi.interact.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,12 +21,17 @@ import android.widget.VideoView;
 
 import com.google.gson.reflect.TypeToken;
 import com.lemi.interact.R;
+import com.lemi.interact.activity.AddRoomActivity;
+import com.lemi.interact.activity.AdverInfoActivity;
 import com.lemi.interact.activity.IndexActivity;
 import com.lemi.interact.activity.LoginActivity;
 import com.lemi.interact.activity.MemberActivity;
 import com.lemi.interact.activity.RoomActivity;
+import com.lemi.interact.adapter.AdverAdapter;
 import com.lemi.interact.api.Api;
+import com.lemi.interact.bean.Advertisement;
 import com.lemi.interact.bean.ApiResult;
+import com.lemi.interact.bean.Room;
 import com.lemi.interact.config.Seeting;
 import com.lemi.interact.util.MyUtils;
 import com.tencent.mm.opensdk.constants.ConstantsAPI;
@@ -34,9 +42,12 @@ import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static com.lemi.interact.MainActivity.REQ_CODE_FOR_REGISTER;
 
-public class HomeFragment extends Fragment implements View.OnClickListener {
+public class HomeFragment extends Fragment implements View.OnClickListener,AdapterView.OnItemClickListener {
 
     private VideoView videoView;
 
@@ -48,6 +59,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     private ImageButton roomCategory4;
 
+    private AdverAdapter adverAdapter;
+
+    private ListView indexListView;
+
+    private List<Advertisement> advertisementList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -73,17 +89,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         super.onViewCreated(view, savedInstanceState);
 
         videoView = view.findViewById(R.id.videoView);
-
-        //加载指定的视频文件
-        String path = "https://voteserver.oss-cn-beijing.aliyuncs.com/voteserver/file/07d632cfc05d41d685cc72fb16bdad32.mp4";
-        videoView.setVideoPath(path);
-        //创建MediaController对象
-        MediaController mediaController = new MediaController(getActivity());
-        //VideoView与MediaController建立关联
-        videoView.setMediaController(mediaController);
-        //让VideoView获取焦点
-        videoView.requestFocus();
-
+        initVideo();
         roomCategory1 = view.findViewById(R.id.room_category_1);
         roomCategory1.setOnClickListener(this);
         roomCategory2 = view.findViewById(R.id.room_category_2);
@@ -93,14 +99,83 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         roomCategory4 = view.findViewById(R.id.room_category_4);
         roomCategory4.setOnClickListener(this);
 
+        indexListView = view.findViewById(R.id.adver_listView);
+        indexListView.setOnItemClickListener(this);
 
+        initAdver();
+
+
+    }
+
+    public void initAdver(){
+        OkHttpUtils
+                .post()
+                .url(Api.apiHost + Api.selectAdvertisement)
+                .addParams("state","1")
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(okhttp3.Call call, Exception e, int id) {
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        java.lang.reflect.Type type = new TypeToken<ApiResult>() {
+                        }.getType();
+                        ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
+                        if (apiResult.getCode().intValue() == 0) {
+                            String jsonString = MyUtils.getGson().toJson(apiResult.getData());
+                            Advertisement[] array = MyUtils.getGson().fromJson(jsonString, Advertisement[].class);
+                            advertisementList = Arrays.asList(array);
+                            adverAdapter = new AdverAdapter(getActivity(), advertisementList);
+                            indexListView.setAdapter(adverAdapter);
+                            adverAdapter.notifyDataSetChanged();
+                        } else {
+                            Toast.makeText(getActivity(), apiResult.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    public void initVideo() {
+        OkHttpUtils
+                .post()
+                .url(Api.apiHost + Api.findAppVideoUrl)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(okhttp3.Call call, Exception e, int id) {
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        java.lang.reflect.Type type = new TypeToken<ApiResult>() {
+                        }.getType();
+                        ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
+                        if (apiResult.getCode().intValue() == 0) {
+                            String path = "https://interact-app.oss-cn-beijing.aliyuncs.com/interact-app/image/376c2e8583fe4910840e29e36e5f10c1.mp4";
+                            if (apiResult.getData() != null) {
+                                path = apiResult.getData().toString();
+                            }
+                            videoView.setVideoPath(path);
+                            videoView.setMediaController(new MediaController(getActivity()));
+                            videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                                public void onPrepared(MediaPlayer mp) {
+                                    videoView.start();
+                                }
+                            });
+                        } else {
+                            Toast.makeText(getActivity(), apiResult.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
     @Override
     public void onClick(View v) {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("data", Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = sharedPreferences.edit();
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.room_category_1:
                 editor.putString("categoryId", 1 + "");
                 editor.commit();
@@ -126,7 +201,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.room_category_4:
-                String userId=sharedPreferences.getString("userId","");
+                String userId = sharedPreferences.getString("userId", "");
                 OkHttpUtils
                         .post()
                         .url(Api.apiHost + Api.isChargeExpired)
@@ -146,16 +221,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                                     editor.putString("categoryId", 4 + "");
                                     editor.commit();
                                     double res = -1;
-                                    if (apiResult.getData() == null){
+                                    if (apiResult.getData() == null) {
                                         res = 1;
-                                    }else {
+                                    } else {
                                         res = Double.parseDouble(apiResult.getData().toString());
                                     }
-                                    if ((int)res == 1){
+                                    if ((int) res == 1) {
                                         Intent intent4 = new Intent();
                                         intent4.setClass(getActivity(), MemberActivity.class);
                                         startActivityForResult(intent4, REQ_CODE_FOR_REGISTER);
-                                    }else {
+                                    } else {
                                         Intent intent4 = new Intent();
                                         intent4.setClass(getActivity(), RoomActivity.class);
                                         startActivityForResult(intent4, REQ_CODE_FOR_REGISTER);
@@ -173,4 +248,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     }
 
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        String adverId = (String) ((TextView) view.findViewById(R.id.adver_id)).getText();
+
+        Intent intent = new Intent();
+        intent.setClass(getActivity(), AdverInfoActivity.class);
+        intent.putExtra("adverId",adverId);
+        startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
+
+    }
 }

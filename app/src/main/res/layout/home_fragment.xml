@@ -26,8 +26,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="220dp"
-        android:background="#ffffffff"
         android:layout_marginLeft="15dp"
+        android:background="#ffffffff"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -35,6 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1">
+
             <VideoView
                 android:id="@+id/videoView"
                 android:layout_width="match_parent"
@@ -44,76 +45,79 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#ffffffff"
-            android:gravity="center"
             android:layout_gravity="center"
             android:layout_weight="2"
+            android:background="#ffffffff"
+            android:gravity="center"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#ffffffff"
-                android:gravity="center"
                 android:layout_gravity="center"
                 android:layout_weight="1"
+                android:background="#ffffffff"
+                android:gravity="center"
                 android:orientation="vertical">
 
                 <ImageButton
                     android:id="@+id/room_category_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@mipmap/canji"
-                    android:background="#00000000"/>
+                    android:background="#00000000"
+                    android:src="@mipmap/canji" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/canji"
-                    android:textSize="13sp"/>
+                    android:textSize="13sp" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#ffffffff"
-                android:gravity="center"
                 android:layout_gravity="center"
                 android:layout_weight="1"
+                android:background="#ffffffff"
+                android:gravity="center"
                 android:orientation="vertical">
 
                 <ImageButton
                     android:id="@+id/room_category_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@mipmap/laonian"
-                    android:background="#00000000"/>
+                    android:background="#00000000"
+                    android:src="@mipmap/laonian" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/laonian"
-                    android:textSize="13sp"/>
+                    android:textSize="13sp" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#ffffffff"
-                android:gravity="center"
                 android:layout_gravity="center"
                 android:layout_weight="1"
+                android:background="#ffffffff"
+                android:gravity="center"
                 android:orientation="vertical">
 
                 <ImageButton
                     android:id="@+id/room_category_3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@mipmap/bangong"
-                    android:background="#00000000"/>
+                    android:background="#00000000"
+                    android:src="@mipmap/bangong" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/bangong"
-                    android:textSize="13sp"/>
+                    android:textSize="13sp" />
             </LinearLayout>
 
         </LinearLayout>
@@ -123,19 +127,36 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#ffffffff"
-        android:gravity="center"
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
+        android:background="#ffffffff"
+        android:gravity="center"
         android:orientation="vertical">
 
         <ImageButton
             android:id="@+id/room_category_4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/jiaoyou"
-            android:background="#00000000"/>
+            android:background="#00000000"
+            android:src="@mipmap/jiaoyou" />
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:background="#ffffffff"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/adver_listView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@drawable/main_list_divider_line"
+            android:dividerHeight="1dp" />
     </LinearLayout>
 
 </LinearLayout>
