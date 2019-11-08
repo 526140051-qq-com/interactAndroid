@@ -16,8 +16,6 @@ import com.google.gson.reflect.TypeToken;
 import com.lemi.interact.R;
 import com.lemi.interact.api.Api;
 import com.lemi.interact.bean.ApiResult;
-import com.lemi.interact.bean.Room;
-import com.lemi.interact.util.MainHandler;
 import com.lemi.interact.util.MyUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -128,9 +126,13 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
             }
             if (index != -1) {
                 RongRTCVideoView big = (RongRTCVideoView) localContainer.getChildAt(0);
+                big.setZOrderOnTop(true);
+                big.setZOrderMediaOverlay(true);
                 localContainer.removeViewAt(0);
-                remotes.addView(big,index, new LinearLayout.LayoutParams(remotes.getHeight(), remotes.getHeight()));
+                remotes.addView(big, index, new LinearLayout.LayoutParams(remotes.getWidth(), remotes.getHeight()));
                 remotes.removeView(view);
+                ((RongRTCVideoView) view).setZOrderOnTop(false);
+                ((RongRTCVideoView) view).setZOrderMediaOverlay(false);
                 localContainer.addView(view, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             }
         }
@@ -170,7 +172,6 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
                     @Override
                     public void onUiFailed(RTCErrorCode rtcErrorCode) {
                         Toast.makeText(RoomInfoActivity.this, "订阅资源失败", Toast.LENGTH_SHORT).show();
-
                     }
                 });
             }
@@ -194,11 +195,12 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
                 }
             });
         }
-
     }
 
     private RongRTCVideoView getNewVideoView() {
         RongRTCVideoView videoView = RongRTCEngine.getInstance().createVideoView(this);
+        videoView.setZOrderOnTop(true);
+        videoView.setZOrderMediaOverlay(true);
         videoView.setOnClickListener(this);
         remotes.addView(videoView, new LinearLayout.LayoutParams(remotes.getWidth(), remotes.getHeight()));
         remotes.bringToFront();
@@ -209,10 +211,16 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
     public void onRemoteUserPublishResource(RongRTCRemoteUser rongRTCRemoteUser, List<RongRTCAVInputStream> list) {
         for (RongRTCAVInputStream inputStream : rongRTCRemoteUser.getRemoteAVStreams()) {
             if (inputStream.getMediaType() == MediaType.VIDEO) {
-                inputStream.setRongRTCVideoView(getNewVideoView());
+                RongRTCVideoView videoView = RongRTCEngine.getInstance().createVideoView(this);
+                videoView.setZOrderOnTop(true);
+                videoView.setZOrderMediaOverlay(true);
+                videoView.setOnClickListener(this);
+                remotes.addView(videoView, new LinearLayout.LayoutParams(remotes.getWidth(), remotes.getHeight()));
+                remotes.bringToFront();
+                inputStream.setRongRTCVideoView(videoView);
             }
         }
-        rongRTCRemoteUser.subscribeAvStream(rongRTCRemoteUser.getRemoteAVStreams(), new RongRTCResultUICallBack() {
+        rongRTCRemoteUser.subscribeAVStream(rongRTCRemoteUser.getRemoteAVStreams(), new RongRTCResultUICallBack() {
             @Override
             public void onUiSuccess() {
                 Toast.makeText(RoomInfoActivity.this, "订阅成功", Toast.LENGTH_SHORT).show();
@@ -223,6 +231,7 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
                 Toast.makeText(RoomInfoActivity.this, "订阅失败", Toast.LENGTH_SHORT).show();
             }
         });
+
     }
 
     @Override
@@ -301,7 +310,7 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
         });
     }
 
-    private void quitRoom(){
+    private void quitRoom() {
         SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
         String userId = sharedPreferences.getString("userId", "");
         OkHttpUtils
