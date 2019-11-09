@@ -90,42 +90,6 @@ public class MemberActivity extends AppCompatActivity implements View.OnClickLis
                 }
         }
     }
-
-//    private void toWXPay() {
-//        iwxapi = WXAPIFactory.createWXAPI(this, null);
-//        iwxapi.registerApp(Seeting.APP_ID);
-//
-//        Runnable payRunnable = new Runnable() {
-//            @Override
-//            public void run() {
-//                PayReq request = new PayReq();
-//                request.appId = Seeting.APP_ID;
-//                request.partnerId = Seeting.partner_ID;
-//                request.prepayId = prepayId;
-//                request.packageValue = "Sign=WXPay";
-//                request.nonceStr = nonceStr;
-//                request.timeStamp = timeStamp;
-//                request.sign = sign;
-//                iwxapi.sendReq(request);
-//            }
-//        };
-//        Thread payThread = new Thread(payRunnable);
-//        payThread.start();
-//    }
-
-//    @Override
-//    public void onResp(BaseResp resp) {
-//
-//        if (resp.getType() == ConstantsAPI.COMMAND_PAY_BY_WX) {
-//            if (resp.errCode == 0) {
-//                Toast.makeText(this, "支付成功", Toast.LENGTH_SHORT).show();
-//            } else {
-//                Toast.makeText(this, "支付失败", Toast.LENGTH_SHORT).show();
-//            }
-//            finish();
-//        }
-//    }
-
     private class MyWebViewClient extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -156,8 +120,11 @@ public class MemberActivity extends AppCompatActivity implements View.OnClickLis
                 req.timeStamp = jsonObject.getString("timestamp");
                 req.packageValue = jsonObject.getString("package");
                 req.sign = jsonObject.getString("sign");
-//                        req.extData			= "app data";
                 api.sendReq(req);
+                SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("pay_type", "charge");
+                editor.commit();
                 Toast.makeText(context, "发起支付成功", Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
                 Toast.makeText(context, "发起支付失败" + e.getMessage(), Toast.LENGTH_SHORT).show();

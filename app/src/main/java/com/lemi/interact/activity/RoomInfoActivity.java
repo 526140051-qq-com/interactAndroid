@@ -1,8 +1,10 @@
 package com.lemi.interact.activity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -36,6 +38,8 @@ import cn.rongcloud.rtc.user.RongRTCRemoteUser;
 import io.rong.imlib.model.Message;
 import cn.rongcloud.rtc.stream.MediaType;
 
+import static com.lemi.interact.MainActivity.REQ_CODE_FOR_REGISTER;
+
 public class RoomInfoActivity extends AppCompatActivity implements RongRTCEventsListener, View.OnClickListener {
 
     private RongRTCVideoView local;
@@ -45,6 +49,7 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
     private String mRoomId;
     private Button button;
     private FrameLayout localContainer;
+    private Button levelRoom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +74,9 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
         button = (Button) findViewById(R.id.finish);
         button.setVisibility(View.GONE);
         button.setOnClickListener(this);
+
+        levelRoom = (Button)findViewById(R.id.live_room);
+        levelRoom.setOnClickListener(this);
         joinRoom();
     }
 
@@ -135,6 +143,29 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
                 ((RongRTCVideoView) view).setZOrderMediaOverlay(false);
                 localContainer.addView(view, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             }
+        }else if (view.getId() == R.id.live_room){
+            new AlertDialog.Builder(this).setTitle("确认退出吗？")
+                    .setIcon(android.R.drawable.ic_dialog_info)
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            removeListener();
+                            quitRoom();
+
+                            Intent intent4 = new Intent();
+                            intent4.setClass(RoomInfoActivity.this, RoomActivity.class);
+                            startActivityForResult(intent4, REQ_CODE_FOR_REGISTER);
+                            finish();
+
+                        }
+                    })
+                    .setNegativeButton("返回", new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {}
+                    }).show();
+
         }
     }
 

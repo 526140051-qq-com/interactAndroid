@@ -43,7 +43,9 @@
         <activity android:name=".activity.RegisterActivity" />
         <activity android:name=".activity.ForgetActivity" />
         <activity android:name=".activity.IndexActivity" />
-        <activity android:name=".activity.RoomActivity" />
+        <activity android:name=".activity.RoomActivity"
+            android:windowSoftInputMode="stateHidden"
+            android:configChanges="keyboardHidden"/>
         <activity android:name=".activity.MemberActivity" />
         <activity android:name=".activity.UserInfoActivity" />
         <activity android:name=".activity.WithdrawRecordActivity" />
@@ -82,6 +84,11 @@
         </receiver>
 
         <activity android:name=".activity.AdverInfoActivity"></activity>
+
+        <activity
+            android:name=".wxapi.WXPayEntryActivity"
+            android:exported="true"
+            android:launchMode="singleTop"/>
     </application>
 
 </manifest>

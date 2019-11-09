@@ -35,8 +35,6 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
 
     private EditText code;
 
-    private EditText card;
-
     private Button codeBtn;
 
     private Button registerBtn;
@@ -62,9 +60,6 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
 
         code = findViewById(R.id.register_code);
         code.setHintTextColor(Color.parseColor("#a5ffffff"));
-
-//        card = findViewById(R.id.register_card);
-//        card.setHintTextColor(Color.parseColor("#a5ffffff"));
 
         codeBtn = findViewById(R.id.register_code_btn);
         codeBtn.setOnClickListener(this);
@@ -106,8 +101,7 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
                                 }.getType();
                                 ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
                                 if (apiResult.getCode().intValue() == 0) {
-                                    String num = (String) apiResult.getData();
-                                    Toast.makeText(RegisterActivity.this, "验证码发送成功：" + num, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(RegisterActivity.this, "验证码发送成功", Toast.LENGTH_SHORT).show();
                                     CountDownTimerUtils mCountDownTimerUtils = new CountDownTimerUtils(codeBtn, 5000, 1000);
                                     mCountDownTimerUtils.start();
                                 } else {
@@ -122,7 +116,6 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
                 String phoneNum1 = phone.getText().toString();
                 String codeNum = code.getText().toString();
                 String password = pwd.getText().toString();
-                String idCard = card.getText().toString();
                 if (phoneNum1 == null || "".equals(phoneNum1.trim())) {
                     Toast.makeText(RegisterActivity.this, "请输入手机号", Toast.LENGTH_SHORT).show();
                     return;
@@ -139,10 +132,6 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
                     Toast.makeText(RegisterActivity.this, "请输入密码", Toast.LENGTH_SHORT).show();
                     return;
                 }
-//                if (idCard == null || "".equals(idCard.trim())) {
-//                    Toast.makeText(RegisterActivity.this, "请输入身份证", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
 
                 registerBtn.setEnabled(false);
                 OkHttpUtils
@@ -151,7 +140,6 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
                         .addParams("phone", phoneNum1)
                         .addParams("code", codeNum)
                         .addParams("password", password)
-                        .addParams("idCard", idCard)
                         .build()
                         .execute(new StringCallback() {
                             @Override

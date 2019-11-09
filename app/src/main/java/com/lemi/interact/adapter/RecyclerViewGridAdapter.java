@@ -93,6 +93,7 @@ public class RecyclerViewGridAdapter extends RecyclerView.Adapter<RecyclerViewGr
         private final TextView itemJoinNickName;
         private final ImageView itemJoinGender;
         private final TextView distance;
+        private final ImageView linkIcon;
         View provinceView;
 
 
@@ -107,6 +108,7 @@ public class RecyclerViewGridAdapter extends RecyclerView.Adapter<RecyclerViewGr
             itemJoinNickName = itemView.findViewById(R.id.item_join_nick_name);
             itemJoinGender = itemView.findViewById(R.id.item_join_gender);
             distance = itemView.findViewById(R.id.distance);
+            linkIcon = itemView.findViewById(R.id.link_icon);
         }
 
         public void setData(RoomResponse data) {
@@ -115,9 +117,9 @@ public class RecyclerViewGridAdapter extends RecyclerView.Adapter<RecyclerViewGr
             }
 
             if (data.getDistance() != null){
-                distance.setText(Math.ceil(data.getDistance()/1000) + "km");
+                distance.setText("距离" + Math.ceil(data.getDistance()/1000) + "km");
             }else {
-                distance.setText("0km");
+                distance.setText("距离0km");
             }
 
             if (data.getPhoto() != null && !"".equals(data.getPhoto())) {
@@ -138,6 +140,12 @@ public class RecyclerViewGridAdapter extends RecyclerView.Adapter<RecyclerViewGr
                 } else {
                     itemGender.setImageResource(R.mipmap.girl);
                 }
+            }
+
+            if (data.getCreateUserId() != null && data.getJoinNickName() != null && !"".equals(data.getJoinNickName())){
+                linkIcon.setImageResource(R.mipmap.yilianje);
+            }else {
+                linkIcon.setImageResource(R.mipmap.lianjie);
             }
 
             if (data.getJoinPhoto() != null && !"".equals(data.getJoinPhoto())) {

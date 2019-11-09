@@ -22,12 +22,12 @@
     <string name="my_info">查看并编辑个人信息</string>
     <string name="xiangqinjiaoyou">相亲交友</string>
     <string name="create_room">创建房间</string>
-    <string name="price">请输入付费金额(单位：元)</string>
+    <string name="price">请输入收款金额(单位：元)</string>
     <string name="pay_result_tip">这个界面用于显示第三方app通过微信支付的结果</string>
     <string name="app_tip">提示</string>
     <string name="pay_result_callback_msg" formatted="false">微信支付结果：%s</string>
     <string name="search">请输入房号搜索</string>
-
+    <string name="level_room">离开房间</string>
 
     <string name="app_back">返回</string>
     <string name="app_ok">确定</string>

@@ -129,7 +129,7 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
 
     public class JsInteration {
         @JavascriptInterface
-        public void joinRoom(String roomId) {
+        public void joinRoom(final String roomId) {
             SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
             final String userId = sharedPreferences.getString("userId", "");
             OkHttpUtils
@@ -164,6 +164,11 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
                                         req.packageValue = jsonObject.getString("package");
                                         req.sign = jsonObject.getString("sign");
                                         api.sendReq(req);
+                                        SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
+                                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                                        editor.putString("pay_type", "room");
+                                        editor.putString("pay_room_id",roomId);
+                                        editor.commit();
                                         Toast.makeText(context, "发起支付成功", Toast.LENGTH_SHORT).show();
                                     } catch (Exception e) {
                                         Toast.makeText(context, "发起支付失败" + e.getMessage(), Toast.LENGTH_SHORT).show();

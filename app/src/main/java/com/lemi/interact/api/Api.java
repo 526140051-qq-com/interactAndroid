@@ -22,13 +22,13 @@ public class Api {
 
     public static String getToken = "rong/getToken";
 
-    public static String findRoomById = "room/findRoomById";
-
     public static String addRoom = "room/addRoom";
 
     public static String joinRoom = "room/joinRoom";
 
     public static String payForRoom = "room/payForRoom";
+
+    public static String isPayForRoom = "room/isPayForRoom";
 
     public static String quitRoom = "room/quitRoom";
 
