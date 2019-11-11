@@ -57,6 +57,8 @@ public class AddRoomActivity extends AppCompatActivity implements View.OnClickLi
 
     private Double latitude;
 
+    private String roomId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +72,9 @@ public class AddRoomActivity extends AppCompatActivity implements View.OnClickLi
         SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
         String categoryId = sharedPreferences.getString("categoryId", "");
         mcategoryId = categoryId;
+
+        Intent intent = getIntent();
+        roomId = intent.getStringExtra("roomId");
 
         linearLayout = (LinearLayout) findViewById(R.id.add_room_ll);
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
@@ -163,6 +168,7 @@ public class AddRoomActivity extends AppCompatActivity implements View.OnClickLi
                         .addParams("price", pri)
                         .addParams("longitude", longitude + "")
                         .addParams("latitude", latitude + "")
+                        .addParams("roomId",roomId)
                         .build()
                         .execute(new StringCallback() {
                             @Override

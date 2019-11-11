@@ -29,6 +29,16 @@ public class RoomResponse {
 
     private Double distance;
 
+    private String city;
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
     public Double getLongitude() {
         return longitude;
     }

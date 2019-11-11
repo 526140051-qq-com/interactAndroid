@@ -24,7 +24,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:gravity="center"
+            android:gravity="right"
+            android:layout_gravity="right"
             android:orientation="vertical">
 
             <com.lemi.interact.view.MyImgView
@@ -37,7 +38,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:gravity="right"
                 android:orientation="horizontal"
                 android:paddingTop="5dp">
 
@@ -58,8 +59,8 @@
         <LinearLayout
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_weight="1"
             android:layout_gravity="center"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <ImageView
@@ -74,7 +75,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:gravity="center"
+            android:gravity="left"
+            android:layout_gravity="left"
             android:orientation="vertical">
 
             <com.lemi.interact.view.MyImgView
@@ -87,7 +89,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:gravity="left"
                 android:orientation="horizontal"
                 android:paddingTop="5dp">
 
@@ -106,14 +108,32 @@
         </LinearLayout>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/distance"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="left"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="10dp"
-        android:textColor="#ffbbbbbb"
-        android:textSize="12sp" />
+        android:layout_weight="2"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:textColor="#ffbbbbbb"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/city"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:textColor="#ffbbbbbb"
+            android:textSize="12sp" />
+    </LinearLayout>
 
 </LinearLayout>

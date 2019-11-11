@@ -4,6 +4,7 @@ package com.lemi.interact.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -12,11 +13,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.reflect.TypeToken;
 import com.lemi.interact.R;
+import com.lemi.interact.activity.AddRoomActivity;
 import com.lemi.interact.activity.IndexActivity;
+import com.lemi.interact.activity.LoginActivity;
 import com.lemi.interact.activity.PersonalActivity;
+import com.lemi.interact.api.Api;
+import com.lemi.interact.bean.ApiResult;
+import com.lemi.interact.bean.Room;
 import com.lemi.interact.bean.RoomResponse;
+import com.lemi.interact.config.Seeting;
+import com.lemi.interact.util.MyUtils;
 import com.lemi.interact.view.MyImgView;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.List;
 
@@ -52,17 +63,62 @@ public class RecyclerViewGridAdapter extends RecyclerView.Adapter<RecyclerViewGr
             public void onClick(View v) {
                 int position = gridViewHolder.getAdapterPosition();
                 RoomResponse roomResponse = mDateBeen.get(position);
-                Integer createUserId = roomResponse.getCreateUserId();
                 Integer roomId = roomResponse.getRoomId();
-                Intent intent = new Intent();
-                intent.putExtra("roomId", roomId + "");
-                intent.putExtra("createUserId", createUserId + "");
-                intent.putExtra("categoryId", mCategoryId);
-                intent.setClass(mContext, PersonalActivity.class);
-                mAppCompatActivity.startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
+
+                getRoomById(roomId);
+
+
             }
         });
         return gridViewHolder;
+    }
+
+    private void getRoomById(Integer roomId){
+        OkHttpUtils
+                .post()
+                .url(Api.apiHost + Api.findRoomById)
+                .addParams("roomId", roomId + "")
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(okhttp3.Call call, Exception e, int id) {
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        java.lang.reflect.Type type = new TypeToken<ApiResult>() {
+                        }.getType();
+                        ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
+                        if (apiResult.getCode().intValue() == 0) {
+                            java.lang.reflect.Type roomType = new TypeToken<Room>() {
+                            }.getType();
+                            Room room = MyUtils.getGson().fromJson(apiResult.getData().toString(), roomType);
+                            String num = room.getNum();
+                            if (Seeting.list.indexOf(num) != -1){
+                                if (room.getCreateUserId() != null){
+                                    Intent intent = new Intent();
+                                    intent.putExtra("roomId", room.getId() + "");
+                                    intent.putExtra("createUserId", room.getCreateUserId() + "");
+                                    intent.putExtra("categoryId", mCategoryId);
+                                    intent.setClass(mContext, PersonalActivity.class);
+                                    mAppCompatActivity.startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
+                                }else {
+                                    Intent intent = new Intent();
+                                    intent.setClass(mContext, AddRoomActivity.class);
+                                    intent.putExtra("roomId", room.getId() + "");
+                                    mAppCompatActivity.startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
+                                }
+                            }else {
+                                Intent intent = new Intent();
+                                intent.putExtra("roomId", room.getId() + "");
+                                intent.putExtra("createUserId", room.getCreateUserId() + "");
+                                intent.putExtra("categoryId", mCategoryId);
+                                intent.setClass(mContext, PersonalActivity.class);
+                                mAppCompatActivity.startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
+                            }
+                        }
+                    }
+                });
     }
 
     @Override
@@ -93,7 +149,9 @@ public class RecyclerViewGridAdapter extends RecyclerView.Adapter<RecyclerViewGr
         private final TextView itemJoinNickName;
         private final ImageView itemJoinGender;
         private final TextView distance;
+        private final TextView city;
         private final ImageView linkIcon;
+
         View provinceView;
 
 
@@ -108,6 +166,7 @@ public class RecyclerViewGridAdapter extends RecyclerView.Adapter<RecyclerViewGr
             itemJoinNickName = itemView.findViewById(R.id.item_join_nick_name);
             itemJoinGender = itemView.findViewById(R.id.item_join_gender);
             distance = itemView.findViewById(R.id.distance);
+            city = itemView.findViewById(R.id.city);
             linkIcon = itemView.findViewById(R.id.link_icon);
         }
 
@@ -121,7 +180,11 @@ public class RecyclerViewGridAdapter extends RecyclerView.Adapter<RecyclerViewGr
             }else {
                 distance.setText("距离0km");
             }
+            if (data.getCity() != null){
+                city.setText(data.getCity());
+            }else {
 
+            }
             if (data.getPhoto() != null && !"".equals(data.getPhoto())) {
                 itemPhoto.setImageURL(data.getPhoto());
             } else {
