@@ -18,6 +18,7 @@
             android:id="@+id/add_room_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="10dip"
             android:layout_gravity="left"
             android:layout_marginLeft="15dp"
             android:background="#00ffffff"

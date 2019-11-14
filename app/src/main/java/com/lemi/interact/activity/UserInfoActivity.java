@@ -56,7 +56,7 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             webView.getSettings().setMixedContentMode(2);
         }
-        webView.addJavascriptInterface(new UserInfoActivity.JsInteration(), "android");
+        webView.addJavascriptInterface(new JsInteration(), "android");
         webView.setWebViewClient(new MyWebViewClient());
         String url = Api.h5Host + Api.edit;
         webView.loadUrl(url);
@@ -76,6 +76,7 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
                     intent.putExtra("pageIndex", 1 + "");
                     intent.setClass(this, IndexActivity.class);
                     startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
+                    finish();
                     break;
                 }
         }

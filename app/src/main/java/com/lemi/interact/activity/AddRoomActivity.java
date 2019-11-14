@@ -159,6 +159,45 @@ public class AddRoomActivity extends AppCompatActivity implements View.OnClickLi
                     pri = "0";
                 }
                 addRoomBtn.setEnabled(false);
+                if (roomId == null || "".equals(roomId)){
+                    OkHttpUtils
+                            .post()
+                            .url(Api.apiHost + Api.addRoom)
+                            .addParams("userId", userId)
+                            .addParams("categoryId", mcategoryId)
+                            .addParams("isFree", isFree + "")
+                            .addParams("price", pri)
+                            .addParams("longitude", longitude + "")
+                            .addParams("latitude", latitude + "")
+                            .build()
+                            .execute(new StringCallback() {
+                                @Override
+                                public void onError(okhttp3.Call call, Exception e, int id) {
+                                }
+
+                                @Override
+                                public void onResponse(String response, int id) {
+                                    java.lang.reflect.Type type = new TypeToken<ApiResult>() {
+                                    }.getType();
+                                    ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
+                                    if (apiResult.getCode().intValue() == 0) {
+
+                                        if (apiResult.getData() != null) {
+                                            java.lang.reflect.Type roomType = new TypeToken<Room>() {
+                                            }.getType();
+                                            Room room = MyUtils.getGson().fromJson(apiResult.getData().toString(), roomType);
+                                            String roomID = room.getNum();
+                                            connectRong(roomID, userId);
+                                        }
+                                    } else {
+                                        Toast.makeText(AddRoomActivity.this, apiResult.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                    addRoomBtn.setEnabled(true);
+                                }
+                            });
+                }else {
+
+
                 OkHttpUtils
                         .post()
                         .url(Api.apiHost + Api.addRoom)
@@ -195,7 +234,7 @@ public class AddRoomActivity extends AppCompatActivity implements View.OnClickLi
                                 addRoomBtn.setEnabled(true);
                             }
                         });
-
+                }
 
                 break;
         }

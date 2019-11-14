@@ -109,13 +109,12 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
                                     }
                                 }
                             });
-
-
-
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.remove("pay_room_id");
                     editor.commit();
                 }
+            } else {
+                finish();
             }
         }
         SharedPreferences.Editor editor = sharedPreferences.edit();

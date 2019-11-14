@@ -7,7 +7,7 @@
     //设置button的大小
     <size
         android:height="40dp"
-        android:width="250dp" />
+        android:width="200dp" />
     //设置button的内边距
     <padding android:left="40dp"
         android:right="40dp"/>

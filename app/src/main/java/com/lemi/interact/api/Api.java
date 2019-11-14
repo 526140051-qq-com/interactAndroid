@@ -16,6 +16,8 @@ public class Api {
 
     public static String findRoom = "room/findRoom";
 
+    public static String getCityNameByL = "room/getCityNameByL";
+
     public static String isChargeExpired = "user/isChargeExpired";
 
     public static String findUserById = "user/findUserById";
