@@ -40,6 +40,8 @@ public class Api {
 
     public static String edit = "/user/edit";
 
+    public static String disclaimer = "/disclaimer";
+
     public static String adverInfo = "/advert";
 
     public static String rechargeRecord = "/user/recharge/record";

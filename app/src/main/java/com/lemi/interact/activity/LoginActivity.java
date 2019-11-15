@@ -2,11 +2,20 @@ package com.lemi.interact.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
@@ -30,19 +39,20 @@ import java.util.List;
 
 import io.rong.imlib.RongIMClient;
 import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 import static com.lemi.interact.MainActivity.REQ_CODE_FOR_REGISTER;
 
-public class LoginActivity extends Activity implements View.OnClickListener , EasyPermissions.PermissionCallbacks{
+public class LoginActivity extends Activity implements View.OnClickListener{
 
-
+    private Activity activity;
     private EditText phone;
-
+    private TextView policy;
     private EditText pwd;
-
+    private AlertDialog dialog;
     private Button login;
-    String[] params = {Manifest.permission.ACCESS_FINE_LOCATION,
+    String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.CAMERA,
@@ -63,7 +73,9 @@ public class LoginActivity extends Activity implements View.OnClickListener , Ea
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_login);
         context = this;
-        methodRequiresTwoPermission();
+        activity = this;
+
+        checkPer();
         init();
     }
 
@@ -82,6 +94,9 @@ public class LoginActivity extends Activity implements View.OnClickListener , Ea
 
         forgetPwd = findViewById(R.id.forget_pwd);
         forgetPwd.setOnClickListener(this);
+
+        policy = findViewById(R.id.policy);
+        policy.setOnClickListener(this);
     }
 
     @Override
@@ -148,6 +163,11 @@ public class LoginActivity extends Activity implements View.OnClickListener , Ea
                 Intent intent1 = new Intent();
                 intent1.setClass(this, ForgetActivity.class);
                 startActivityForResult(intent1, REQ_CODE_FOR_REGISTER);
+                break;
+            case R.id.policy:
+                Intent intent2 = new Intent();
+                intent2.setClass(this, PolicyActivity.class);
+                startActivityForResult(intent2, REQ_CODE_FOR_REGISTER);
                 break;
 
         }
@@ -231,29 +251,83 @@ public class LoginActivity extends Activity implements View.OnClickListener , Ea
         });
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        // Forward results to EasyPermissions
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
-    @AfterPermissionGranted(RC_CAMERA_AND_LOCATION)
-    private void methodRequiresTwoPermission() {
-        if (EasyPermissions.hasPermissions(this, params)) {
-        } else {
-            EasyPermissions.requestPermissions(this, "应用需要权限",
-                    RC_CAMERA_AND_LOCATION, params);
-
+    private void checkPer() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int i = ContextCompat.checkSelfPermission(this, permissions[0]);
+            if (i != PackageManager.PERMISSION_GRANTED) {
+                showDialogTipUserRequestPermission();
+            }
         }
     }
 
-    @Override
-    public void onPermissionsGranted(int requestCode, List<String> perms) {
-
+    // 提示用户该请求权限的弹出框
+    private void showDialogTipUserRequestPermission() {
+        new AlertDialog.Builder(this)
+                .setTitle("权限提醒")
+                .setMessage("需要开启权限")
+                .setPositiveButton("立即开启", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ActivityCompat.requestPermissions(activity, permissions, 3000);
+                    }
+                })
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                }).setCancelable(false).show();
     }
 
+    // 用户权限 申请 的回调方法
     @Override
-    public void onPermissionsDenied(int requestCode, List<String> perms) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
+        if (requestCode == 321) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    // 判断用户是否 点击了不再提醒。(检测该权限是否还可以申请)
+                    boolean b = shouldShowRequestPermissionRationale(permissions[0]);
+                    if (!b) {
+                        // 用户还是想用我的 APP 的
+                        // 提示用户去应用设置界面手动开启权限
+                        showDialogTipUserGoToAppSettting();
+                    } else
+                        finish();
+                }
+            }
+        }
+    }
+
+    private void showDialogTipUserGoToAppSettting() {
+
+        dialog = new AlertDialog.Builder(this)
+                .setTitle("权限不可用")
+                .setMessage("请在-应用设置-权限-中，允许河长制使用存储权限来保存用户数据")
+                .setPositiveButton("立即开启", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 跳转到应用设置界面
+                        goToAppSetting();
+                    }
+                })
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                }).setCancelable(false).show();
+    }
+
+    // 跳转到当前应用的设置界面
+    private void goToAppSetting() {
+        Intent intent = new Intent();
+
+        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getPackageName(), null);
+        intent.setData(uri);
+
+        startActivityForResult(intent, 123);
     }
 }

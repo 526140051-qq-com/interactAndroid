@@ -124,11 +124,6 @@ public class AddRoomActivity extends AppCompatActivity implements View.OnClickLi
         addRoomBtn.setOnClickListener(this);
 
         price = (EditText) findViewById(R.id.price);
-        if (mcategoryId.equals("4")) {
-            price.setEnabled(false);
-        } else {
-            price.setEnabled(true);
-        }
     }
 
     @Override
