@@ -41,5 +41,35 @@ public class Seeting {
         list.add("100018");
         list.add("100019");
         list.add("100020");
+        list.add("100021");
+        list.add("100022");
+        list.add("100023");
+        list.add("100024");
+        list.add("100025");
+        list.add("100026");
+        list.add("100027");
+        list.add("100028");
+        list.add("100029");
+        list.add("100030");
+        list.add("100031");
+        list.add("100032");
+        list.add("100033");
+        list.add("100034");
+        list.add("100035");
+        list.add("100036");
+        list.add("100037");
+        list.add("100038");
+        list.add("100039");
+        list.add("100040");
+        list.add("100041");
+        list.add("100042");
+        list.add("100043");
+        list.add("100044");
+        list.add("100045");
+        list.add("100046");
+        list.add("100047");
+        list.add("100048");
+        list.add("100049");
+        list.add("100050");
     }
 }

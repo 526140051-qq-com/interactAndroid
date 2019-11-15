@@ -46,6 +46,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
+
 import static com.lemi.interact.MainActivity.REQ_CODE_FOR_REGISTER;
 
 public class RoomActivity extends AppCompatActivity implements View.OnClickListener{
@@ -73,7 +76,6 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
     private LinearLayout roomCity;
 
     private TextView roomCityName;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,36 +117,41 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
         }
 
     }
-
-
     private void initData(final String categoryId) {
         recyclerView = (RecyclerView) findViewById(R.id.recyler_view);
         roomCityName = (TextView) findViewById(R.id.room_city_name);
-        OkHttpUtils
-                .post()
-                .url(Api.apiHost + Api.getCityNameByL)
-                .addParams("longitude", longitude + "")
-                .addParams("latitude", latitude + "")
-                .build()
-                .execute(new StringCallback() {
-                    @Override
-                    public void onError(okhttp3.Call call, Exception e, int id) {
-                    }
-
-                    @Override
-                    public void onResponse(String response, int id) {
-                        java.lang.reflect.Type type = new TypeToken<ApiResult>() {
-                        }.getType();
-                        ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
-                        if (apiResult.getCode().intValue() == 0) {
-                            String city = apiResult.getData().toString();
-                            roomCityName.setText(city.trim());
-                        } else {
-                            roomCityName.setText("全部");
+        if (longitude != null && latitude != null){
+            OkHttpUtils
+                    .post()
+                    .url(Api.apiHost + Api.getCityNameByL)
+                    .addParams("longitude", longitude + "")
+                    .addParams("latitude", latitude + "")
+                    .build()
+                    .execute(new StringCallback() {
+                        @Override
+                        public void onError(okhttp3.Call call, Exception e, int id) {
+                            Toast.makeText(RoomActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
-                        initRoom();
-                    }
-                });
+
+                        @Override
+                        public void onResponse(String response, int id) {
+                            java.lang.reflect.Type type = new TypeToken<ApiResult>() {
+                            }.getType();
+                            ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
+                            if (apiResult.getCode().intValue() == 0) {
+                                String city = apiResult.getData().toString();
+                                roomCityName.setText(city.trim());
+                            } else {
+                                roomCityName.setText("全部");
+                            }
+                            initRoom();
+                        }
+                    });
+        }else {
+            roomCityName.setText("全部");
+            initRoom();
+        }
+
 
         addRoomBtn = (ImageButton) findViewById(R.id.add_room_btn);
         addRoomBtn.setOnClickListener(this);
@@ -428,4 +435,5 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
         startActivityForResult(intent, 0);
     }
+
 }

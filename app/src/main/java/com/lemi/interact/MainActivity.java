@@ -1,5 +1,6 @@
 package com.lemi.interact;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -18,11 +19,17 @@ import com.lemi.interact.util.MyUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
-import io.rong.imlib.RongIMClient;
+import java.util.List;
 
-public class MainActivity extends Activity {
+import io.rong.imlib.RongIMClient;
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
+
+public class MainActivity extends Activity implements EasyPermissions.PermissionCallbacks {
 
     public static final int REQ_CODE_FOR_REGISTER = 1;
+
+    private static final int RC_CAMERA_AND_LOCATION = 100;
 
     Context context;
 
@@ -46,75 +53,36 @@ public class MainActivity extends Activity {
         }
 
     }
-
-    private void connectRong(final Integer userId) {
-        SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
-        String token = sharedPreferences.getString("im_token", "");
-        if (token != null && !"".equals(token)) {
-            connect(token, userId);
-        } else {
-            OkHttpUtils
-                    .post()
-                    .url(Api.apiHost + Api.getToken)
-                    .addParams("userId", userId + "")
-                    .build()
-                    .execute(new StringCallback() {
-                        @Override
-                        public void onError(okhttp3.Call call, Exception e, int id) {
-                        }
-
-                        @Override
-                        public void onResponse(String response, int id) {
-                            java.lang.reflect.Type type = new TypeToken<ApiResult>() {
-                            }.getType();
-                            ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
-                            if (apiResult.getCode().intValue() == 0) {
-                                String token = apiResult.getData().toString();
-                                SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
-                                SharedPreferences.Editor editor = sharedPreferences.edit();
-                                editor.putString("im_token", token);
-                                editor.commit();
-                                connect(token, userId);
-                            } else {
-                                Toast.makeText(MainActivity.this, apiResult.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-        }
-
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        // Forward results to EasyPermissions
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
-    private void connect(final String token, final Integer userId) {
-        MainHandler.getInstance().post(new Runnable() {
-            @Override
-            public void run() {
+    private void methodRequiresTwoPermission() {
+        String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.CAMERA,
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.READ_EXTERNAL_STORAGE};
+        if (EasyPermissions.hasPermissions(this, perms)) {
+        } else {
+            EasyPermissions.requestPermissions(this, "应用需要权限",
+                    RC_CAMERA_AND_LOCATION, perms);
 
-                RongIMClient.connect(token, new RongIMClient.ConnectCallback() {
-                    @Override
-                    public void onTokenIncorrect() {}
+        }
+    }
 
-                    /**
-                     * 连接融云成功
-                     */
-                    @Override
-                    public void onSuccess(String userid) {
-                        Intent intent = new Intent();
-                        intent.setClass(context, IndexActivity.class);
-                        startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
-                        finish();
-                    }
+    @Override
+    public void onPermissionsGranted(int requestCode, List<String> perms) {
+        methodRequiresTwoPermission();
+    }
 
-                    /**
-                     * 连接融云失败
-                     */
-                    @Override
-                    public void onError(RongIMClient.ErrorCode errorCode) {
+    @Override
+    public void onPermissionsDenied(int requestCode, List<String> perms) {
 
-                        System.out.println(errorCode.getMessage());
-
-                    }
-                });
-            }
-        });
     }
 }

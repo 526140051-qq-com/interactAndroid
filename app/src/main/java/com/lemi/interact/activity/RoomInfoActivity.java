@@ -99,7 +99,7 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
 
             @Override
             protected void onUiFailed(RTCErrorCode rtcErrorCode) {
-                Toast.makeText(RoomInfoActivity.this, "加入房间失败 rtcErrorCode：" + rtcErrorCode, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(RoomInfoActivity.this, "加入房间失败 rtcErrorCode：" + rtcErrorCode, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -197,12 +197,12 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
                 remoteUser.subscribeAvStream(remoteUser.getRemoteAVStreams(), new RongRTCResultUICallBack() {
                     @Override
                     public void onUiSuccess() {
-                        Toast.makeText(RoomInfoActivity.this, "订阅资源成功", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(RoomInfoActivity.this, "订阅资源成功", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onUiFailed(RTCErrorCode rtcErrorCode) {
-                        Toast.makeText(RoomInfoActivity.this, "订阅资源失败", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(RoomInfoActivity.this, "订阅资源失败", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -217,12 +217,12 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
             mLocalUser.publishDefaultAVStream(new RongRTCResultUICallBack() {
                 @Override
                 public void onUiSuccess() {
-                    Toast.makeText(RoomInfoActivity.this, "发布资源成功", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(RoomInfoActivity.this, "发布资源成功", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void onUiFailed(RTCErrorCode rtcErrorCode) {
-                    Toast.makeText(RoomInfoActivity.this, "发布资源失败", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(RoomInfoActivity.this, "发布资源失败", Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -254,12 +254,12 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
         rongRTCRemoteUser.subscribeAVStream(rongRTCRemoteUser.getRemoteAVStreams(), new RongRTCResultUICallBack() {
             @Override
             public void onUiSuccess() {
-                Toast.makeText(RoomInfoActivity.this, "订阅成功", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(RoomInfoActivity.this, "订阅成功", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onUiFailed(RTCErrorCode rtcErrorCode) {
-                Toast.makeText(RoomInfoActivity.this, "订阅失败", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(RoomInfoActivity.this, "订阅失败", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -336,7 +336,7 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
 
             @Override
             public void onUiFailed(RTCErrorCode rtcErrorCode) {
-                Toast.makeText(RoomInfoActivity.this, "离开房间失败", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(RoomInfoActivity.this, "离开房间失败", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -363,7 +363,7 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
                         if (apiResult.getCode().intValue() == 0) {
                             quit();
                         } else {
-                            Toast.makeText(RoomInfoActivity.this, apiResult.getMessage(), Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(RoomInfoActivity.this, apiResult.getMessage(), Toast.LENGTH_SHORT).show();
                         }
 
                     }
