@@ -36,7 +36,14 @@ public class WithdrawRecordActivity extends AppCompatActivity implements View.On
 
         init();
     }
-
+    @Override
+    public void onBackPressed() {
+        if (webView.canGoBack()) {
+            webView.goBack();
+        } else {
+            finish();
+        }
+    }
     private void init() {
         webView = (WebView) findViewById(R.id.withdraw_web);
 

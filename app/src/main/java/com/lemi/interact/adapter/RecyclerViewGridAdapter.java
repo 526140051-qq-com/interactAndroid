@@ -404,10 +404,11 @@ public class RecyclerViewGridAdapter extends RecyclerView.Adapter<RecyclerViewGr
                                                 req.packageValue = jsonObject.getString("package");
                                                 req.sign = jsonObject.getString("sign");
                                                 api.sendReq(req);
+                                                String out_trade_no = jsonObject.getString("out_trade_no");
                                                 SharedPreferences sharedPreferences = mContext.getSharedPreferences("data", Context.MODE_PRIVATE);
                                                 SharedPreferences.Editor editor = sharedPreferences.edit();
                                                 editor.putString("pay_type", "room");
-                                                editor.putString("pay_room_id",roomId + "");
+                                                editor.putString("out_trade_no",out_trade_no);
                                                 editor.commit();
                                                 Toast.makeText(mContext, "发起支付成功", Toast.LENGTH_SHORT).show();
                                             } catch (Exception e) {

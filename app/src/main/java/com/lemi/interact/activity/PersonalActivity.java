@@ -127,6 +127,10 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
     public class JsInteration {
         @JavascriptInterface
         public void joinRoom(final String roomId) {
@@ -154,7 +158,6 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
                                     IWXAPI api = WXAPIFactory.createWXAPI(context, "wxe3d1f34f56595a6e");
                                     try {
                                         JSONObject jsonObject = new JSONObject(apiResult.getData().toString());
-
                                         PayReq req = new PayReq();
                                         req.appId = jsonObject.getString("appid");
                                         req.partnerId = jsonObject.getString("partnerid");
@@ -164,10 +167,12 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
                                         req.packageValue = jsonObject.getString("package");
                                         req.sign = jsonObject.getString("sign");
                                         api.sendReq(req);
+
+                                        String out_trade_no = jsonObject.getString("out_trade_no");
                                         SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
                                         SharedPreferences.Editor editor = sharedPreferences.edit();
                                         editor.putString("pay_type", "room");
-                                        editor.putString("pay_room_id",roomId);
+                                        editor.putString("out_trade_no",out_trade_no);
                                         editor.commit();
                                         Toast.makeText(context, "发起支付成功", Toast.LENGTH_SHORT).show();
                                     } catch (Exception e) {
@@ -238,7 +243,6 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
 
                         @Override
                         public void onError(RongIMClient.ErrorCode errorCode) {
-                            System.out.println(errorCode.getMessage());
                         }
                     });
                 }

@@ -36,7 +36,14 @@ public class RechargeRecordActivity extends AppCompatActivity  implements View.O
 
         init();
     }
-
+    @Override
+    public void onBackPressed() {
+        if (webView.canGoBack()) {
+            webView.goBack();
+        } else {
+            finish();
+        }
+    }
     private void init() {
         webView = (WebView) findViewById(R.id.recharge_web);
 

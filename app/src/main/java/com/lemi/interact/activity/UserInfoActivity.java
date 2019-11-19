@@ -64,7 +64,14 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
         back = (ImageView) findViewById(R.id.userinfo_back);
         back.setOnClickListener(this);
     }
-
+    @Override
+    public void onBackPressed() {
+        if (webView.canGoBack()) {
+            webView.goBack();
+        }else {
+            finish();
+        }
+    }
     @Override
     public void onClick(View v) {
         switch (v.getId()) {

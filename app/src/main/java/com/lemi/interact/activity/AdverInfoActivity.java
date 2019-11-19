@@ -38,6 +38,8 @@ public class AdverInfoActivity extends AppCompatActivity implements View.OnClick
         init();
     }
 
+
+
     private void init() {
         webView = (WebView) findViewById(R.id.adverinfo_web);
 
@@ -68,7 +70,17 @@ public class AdverInfoActivity extends AppCompatActivity implements View.OnClick
         back = (ImageView) findViewById(R.id.adverinfo_back);
         back.setOnClickListener(this);
     }
-
+    @Override
+    public void onBackPressed() {
+        if (webView.canGoBack()) {
+            webView.goBack();
+        } else {
+            Intent intent = new Intent();
+            intent.setClass(this, IndexActivity.class);
+            startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
+            finish();
+        }
+    }
     @Override
     public void onClick(View view) {
         switch (view.getId()) {

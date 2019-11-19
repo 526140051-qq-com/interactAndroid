@@ -63,7 +63,10 @@ public class ForgetActivity extends Activity implements View.OnClickListener {
         forgetBtn = findViewById(R.id.forget_button);
         forgetBtn.setOnClickListener(this);
     }
-
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
     @Override
     public void onClick(View v) {
 
@@ -97,7 +100,7 @@ public class ForgetActivity extends Activity implements View.OnClickListener {
                                 if (apiResult.getCode().intValue() == 0) {
                                     String num = (String) apiResult.getData();
                                     Toast.makeText(ForgetActivity.this, "验证码发送成功：" + num, Toast.LENGTH_SHORT).show();
-                                    CountDownTimerUtils mCountDownTimerUtils = new CountDownTimerUtils(codeBtn, 5000, 1000);
+                                    CountDownTimerUtils mCountDownTimerUtils = new CountDownTimerUtils(codeBtn, 60000, 1000);
                                     mCountDownTimerUtils.start();
                                 } else {
                                     codeBtn.setEnabled(true);

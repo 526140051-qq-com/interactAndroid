@@ -26,18 +26,40 @@
         android:text="finish"
         android:visibility="gone" />
 
-    <Button
-        android:id="@+id/live_room"
-        style="?android:attr/borderlessButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
         android:layout_gravity="center_horizontal|bottom"
         android:layout_marginBottom="10dp"
-        android:background="@drawable/leve_room_button_shape"
-        android:gravity="center"
-        android:text="@string/level_room"
-        android:textColor="@color/text_color"
-        android:textSize="14sp" />
+        android:background="#00000000"
+        android:orientation="horizontal">
 
+        <ImageButton
+            android:id="@+id/live_room"
+            android:layout_weight="1"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:background="@drawable/leve_room_button_shape"
+            android:src="@mipmap/level_room" />
+
+        <ImageButton
+            android:id="@+id/qh_room"
+            android:layout_weight="1"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:background="@drawable/leve_room_button_shape"
+            android:src="@mipmap/qianhou" />
+
+        <ImageButton
+            android:id="@+id/gb_room"
+            android:layout_weight="1"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:background="@drawable/leve_room_button_shape"
+            android:src="@mipmap/guanbi" />
+    </LinearLayout>
     
 </FrameLayout>

@@ -298,4 +298,9 @@ public class AddRoomActivity extends AppCompatActivity implements View.OnClickLi
         Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
         startActivityForResult(intent, 0);
     }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 }

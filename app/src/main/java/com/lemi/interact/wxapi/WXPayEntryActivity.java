@@ -65,8 +65,8 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
     public void onResp(BaseResp resp) {
         SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
         if (resp.getType() == ConstantsAPI.COMMAND_PAY_BY_WX) {
+            String payType = sharedPreferences.getString("pay_type", "");
             if (resp.errCode == 0) {
-                String payType = sharedPreferences.getString("pay_type", "");
                 if (payType.equals("charge")) {
                     Intent intent = new Intent();
                     intent.setClass(getApplicationContext(), RoomActivity.class);
@@ -78,13 +78,12 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    final String roomId = sharedPreferences.getString("pay_room_id", "");
+                    final String out_trade_no = sharedPreferences.getString("out_trade_no", "");
                     final String userId = sharedPreferences.getString("userId", "");
                     OkHttpUtils
                             .post()
                             .url(Api.apiHost + Api.isPayForRoom)
-                            .addParams("roomId", roomId)
-                            .addParams("userId", userId)
+                            .addParams("outTradeNo", out_trade_no)
                             .build()
                             .execute(new StringCallback() {
                                 @Override
@@ -110,10 +109,30 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
                                 }
                             });
                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.remove("pay_room_id");
+                    editor.remove("out_trade_no");
                     editor.commit();
                 }
             } else {
+                if (payType.equals("room")) {
+                    final String out_trade_no = sharedPreferences.getString("out_trade_no", "");
+                    OkHttpUtils
+                            .post()
+                            .url(Api.apiHost + Api.removeRoomJoin)
+                            .addParams("outTradeNo", out_trade_no)
+                            .build()
+                            .execute(new StringCallback() {
+                                @Override
+                                public void onError(okhttp3.Call call, Exception e, int id) {
+                                }
+
+                                @Override
+                                public void onResponse(String response, int id) {
+                                }
+                            });
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.remove("out_trade_no");
+                    editor.commit();
+                }
                 finish();
             }
         }

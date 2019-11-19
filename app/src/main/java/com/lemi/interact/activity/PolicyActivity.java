@@ -76,6 +76,14 @@ public class PolicyActivity extends AppCompatActivity  implements View.OnClickLi
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if (webView.canGoBack()) {
+            webView.goBack();
+        } else {
+            finish();
+        }
+    }
 
     private class MyWebViewClient extends WebViewClient {
         @Override

@@ -46,7 +46,14 @@ public class MemberActivity extends AppCompatActivity implements View.OnClickLis
 
         init();
     }
-
+    @Override
+    public void onBackPressed() {
+        if (webView.canGoBack()) {
+            webView.goBack();
+        } else {
+            finish();
+        }
+    }
     private void init() {
         webView = (WebView) findViewById(R.id.member_web);
 

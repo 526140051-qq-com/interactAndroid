@@ -102,7 +102,7 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
                                 ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
                                 if (apiResult.getCode().intValue() == 0) {
                                     Toast.makeText(RegisterActivity.this, "验证码发送成功", Toast.LENGTH_SHORT).show();
-                                    CountDownTimerUtils mCountDownTimerUtils = new CountDownTimerUtils(codeBtn, 5000, 1000);
+                                    CountDownTimerUtils mCountDownTimerUtils = new CountDownTimerUtils(codeBtn, 60000, 1000);
                                     mCountDownTimerUtils.start();
                                 } else {
                                     codeBtn.setEnabled(true);
@@ -171,84 +171,5 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
                         });
                 break;
         }
-    }
-
-
-    private void connectRong(final Integer userId) {
-        SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
-        String token = sharedPreferences.getString("im_token", "");
-        if (token != null && !"".equals(token)) {
-            connect(token, userId);
-        } else {
-            OkHttpUtils
-                    .post()
-                    .url(Api.apiHost + Api.getToken)
-                    .addParams("userId", userId + "")
-                    .build()
-                    .execute(new StringCallback() {
-                        @Override
-                        public void onError(okhttp3.Call call, Exception e, int id) {
-                        }
-
-                        @Override
-                        public void onResponse(String response, int id) {
-                            java.lang.reflect.Type type = new TypeToken<ApiResult>() {
-                            }.getType();
-                            ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
-                            if (apiResult.getCode().intValue() == 0) {
-                                String token = apiResult.getData().toString();
-                                SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
-                                SharedPreferences.Editor editor = sharedPreferences.edit();
-                                editor.putString("im_token", token);
-                                editor.commit();
-                                connect(token, userId);
-                            } else {
-                                Toast.makeText(RegisterActivity.this, apiResult.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-        }
-
-    }
-
-    private void connect(final String token, final Integer userId) {
-        MainHandler.getInstance().post(new Runnable() {
-            @Override
-            public void run() {
-
-                RongIMClient.connect(token, new RongIMClient.ConnectCallback() {
-                    @Override
-                    public void onTokenIncorrect() {
-                        System.out.println("11111111111111111111111");
-                    }
-
-                    /**
-                     * 连接融云成功
-                     */
-                    @Override
-                    public void onSuccess(String userid) {
-                        SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString("userId", userId + "");
-                        editor.commit();
-                        Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent();
-                        intent.setClass(context, IndexActivity.class);
-                        startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
-                        finish();
-                    }
-
-                    /**
-                     * 连接融云失败
-                     */
-                    @Override
-                    public void onError(RongIMClient.ErrorCode errorCode) {
-
-                        System.out.println(errorCode.getMessage());
-
-                    }
-                });
-            }
-        });
     }
 }

@@ -310,7 +310,10 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
         recyclerView.setLayoutManager(gridLayoutManager);
 
     }
-
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
     @Override
     public void onClick(View v) {
 
