@@ -51,13 +51,11 @@
         android:gravity="center">
 
         <EditText
-            android:id="@+id/price"
+            android:id="@+id/price_item"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="@string/price"
             android:inputType="number"
-            android:paddingBottom="3dp"
-            android:paddingTop="3dp"
             android:background="@drawable/add_room_edit_shape"
             android:textColor="@color/text_color"
             android:textSize="13sp" />

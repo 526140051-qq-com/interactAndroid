@@ -1,6 +1,7 @@
 package com.lemi.interact.activity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -37,19 +39,19 @@ import io.rong.imlib.RongIMClient;
 
 import static com.lemi.interact.MainActivity.REQ_CODE_FOR_REGISTER;
 
-public class AddRoomActivity extends AppCompatActivity implements View.OnClickListener {
+public class AddRoomActivity extends Activity implements View.OnClickListener {
 
-    LinearLayout linearLayout;
+    private LinearLayout linearLayout;
 
-    ImageButton addRoomBack;
+    private ImageButton addRoomBack;
 
     private String mcategoryId;
 
-    Context context;
+    private Context context;
 
-    Button addRoomBtn;
+    private Button addRoomBtn;
 
-    EditText price;
+    private EditText price;
 
     private LocationManager lm;
 
@@ -63,11 +65,8 @@ public class AddRoomActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_add_room);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
-
         context = this;
         SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
         String categoryId = sharedPreferences.getString("categoryId", "");
@@ -117,13 +116,13 @@ public class AddRoomActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void init() {
-        addRoomBack = (ImageButton) findViewById(R.id.add_room_back);
+        addRoomBack = findViewById(R.id.add_room_back);
         addRoomBack.setOnClickListener(this);
 
-        addRoomBtn = (Button) findViewById(R.id.add_room1_btn);
+        addRoomBtn = findViewById(R.id.add_room1_btn);
         addRoomBtn.setOnClickListener(this);
 
-        price = (EditText) findViewById(R.id.price);
+        price = findViewById(R.id.price_item);
     }
 
     @Override
@@ -137,6 +136,18 @@ public class AddRoomActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.add_room1_btn:
                 String pri = price.getText().toString();
+                if (pri != null && !pri.equals("")){
+                    double priceItem = Double.parseDouble(pri);
+                    if (priceItem>300){
+                        Toast.makeText(AddRoomActivity.this, "收款范围不能超过300元", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if (priceItem<0){
+                        Toast.makeText(AddRoomActivity.this, "收款范围不能小于0元", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
                 SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
                 final String userId = sharedPreferences.getString("userId", "");
                 Integer isFree = 1;

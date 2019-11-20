@@ -111,6 +111,8 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.remove("out_trade_no");
                     editor.commit();
+                } else if (payType.equals("charge_again")) {
+                    finish();
                 }
             } else {
                 if (payType.equals("room")) {

@@ -324,6 +324,7 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
                 intent.setClass(context, AddRoomActivity.class);
                 startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
                 addRoomBtn.setEnabled(true);
+                finish();
                 break;
             case R.id.room_list_back:
                 Intent intent1 = new Intent();

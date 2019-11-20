@@ -18,7 +18,14 @@
             android:layout_marginLeft="15dp"
             android:padding="10dip"
             android:src="@mipmap/back"/>
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="我的提现"
+            android:textColor="@color/text_color"
+            android:textSize="17sp" />
     </LinearLayout>
     <WebView
         android:id="@+id/withdraw_web"

@@ -19,6 +19,15 @@
             android:layout_marginLeft="15dp"
             android:src="@mipmap/back"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="购买门票"
+            android:textColor="@color/text_color"
+            android:textSize="17sp" />
+
     </LinearLayout>
     <WebView
         android:id="@+id/member_web"

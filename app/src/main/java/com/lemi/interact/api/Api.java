@@ -56,4 +56,7 @@ public class Api {
 
     public static String selectAdvertisement = "/adminManager/selectAdvertisement";
 
+    public static String chargeExpiredTime = "/user/chargeExpiredTime";
+
+    public static String wxPayApi = "/user/wxPayApi";
 }

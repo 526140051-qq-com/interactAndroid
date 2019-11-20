@@ -9,7 +9,7 @@
     <string name="code_text">获取验证码</string>
     <string name="register_text">注册</string>
     <string name="forget_text">修改</string>
-    <string name="chongzhi">我的充值</string>
+    <string name="chongzhi">我的订单</string>
     <string name="tixian">我的提现</string>
     <string name="myliwu">我收到的礼物</string>
     <string name="liwu">我送出的礼物</string>
@@ -22,7 +22,7 @@
     <string name="my_info">查看并编辑个人信息</string>
     <string name="xiangqinjiaoyou">相亲交友</string>
     <string name="create_room">创建房间</string>
-    <string name="price">请输入收款金额(单位：元)</string>
+    <string name="price">输入收款金额(0元~300元，单位：元)</string>
     <string name="pay_result_tip">这个界面用于显示第三方app通过微信支付的结果</string>
     <string name="app_tip">提示</string>
     <string name="pay_result_callback_msg" formatted="false">微信支付结果：%s</string>

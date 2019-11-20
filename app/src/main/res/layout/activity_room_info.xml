@@ -6,10 +6,9 @@
 
     <FrameLayout
         android:id="@+id/local_container"
-        android:layout_below="@+id/remotes"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </FrameLayout>
+        android:layout_height="match_parent"
+        android:layout_below="@+id/remotes"></FrameLayout>
 
 
     <LinearLayout
@@ -17,7 +16,8 @@
         android:layout_width="125dp"
         android:layout_height="168dp"
         android:background="@drawable/shape_wait_tips"
-        android:orientation="vertical"/>
+        android:orientation="vertical" />
+
     <Button
         android:id="@+id/finish"
         android:layout_width="wrap_content"
@@ -28,38 +28,56 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
         android:layout_gravity="center_horizontal|bottom"
         android:layout_marginBottom="10dp"
         android:background="#00000000"
         android:orientation="horizontal">
 
-        <ImageButton
-            android:id="@+id/live_room"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:background="@drawable/leve_room_button_shape"
-            android:src="@mipmap/level_room" />
+            android:gravity="center"
+            android:orientation="horizontal">
 
-        <ImageButton
-            android:id="@+id/qh_room"
-            android:layout_weight="1"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:background="@drawable/leve_room_button_shape"
-            android:src="@mipmap/qianhou" />
+            <ImageButton
+                android:id="@+id/live_room"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:src="@mipmap/level_room" />
+        </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/gb_room"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:background="@drawable/leve_room_button_shape"
-            android:src="@mipmap/guanbi" />
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/qh_room"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:src="@mipmap/qianhou" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/gb_room"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:src="@mipmap/guanbi" />
+        </LinearLayout>
     </LinearLayout>
-    
+
 </FrameLayout>

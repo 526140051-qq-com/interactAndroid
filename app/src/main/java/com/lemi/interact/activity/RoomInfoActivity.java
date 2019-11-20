@@ -1,5 +1,6 @@
 package com.lemi.interact.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -40,6 +42,7 @@ import cn.rongcloud.rtc.events.RTCVideoFrame;
 import cn.rongcloud.rtc.events.RongRTCEventsListener;
 import cn.rongcloud.rtc.room.RongRTCRoom;
 import cn.rongcloud.rtc.stream.local.RongRTCCapture;
+import cn.rongcloud.rtc.stream.local.RongRTCLocalSourceManager;
 import cn.rongcloud.rtc.stream.remote.RongRTCAVInputStream;
 import cn.rongcloud.rtc.user.RongRTCLocalUser;
 import cn.rongcloud.rtc.user.RongRTCRemoteUser;
@@ -49,7 +52,7 @@ import cn.rongcloud.rtc.stream.MediaType;
 
 import static com.lemi.interact.MainActivity.REQ_CODE_FOR_REGISTER;
 
-public class RoomInfoActivity extends AppCompatActivity implements RongRTCEventsListener, View.OnClickListener,ILocalVideoFrameListener,ILocalAudioPCMBufferListener,IRemoteAudioPCMBufferListener {
+public class RoomInfoActivity extends Activity implements RongRTCEventsListener, View.OnClickListener, ILocalVideoFrameListener, ILocalAudioPCMBufferListener, IRemoteAudioPCMBufferListener {
 
     private RongRTCVideoView local;
     private LinearLayout remotes;
@@ -61,14 +64,15 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
     private FrameLayout localContainer;
     private ImageButton levelRoom;
     private ImageButton qhRoom;
+    private ImageButton gbRoom;
     private GPUImageBeautyFilter beautyFilter;
+    private boolean qianhou_flag = false;
+    private boolean guanbi_flag = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_room_info);
         Intent intent = getIntent();
         mRoomId = intent.getStringExtra("roomId");
@@ -87,10 +91,12 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
         button.setVisibility(View.GONE);
         button.setOnClickListener(this);
 
-        levelRoom = (ImageButton)findViewById(R.id.live_room);
+        levelRoom = (ImageButton) findViewById(R.id.live_room);
         levelRoom.setOnClickListener(this);
         qhRoom = findViewById(R.id.qh_room);
         qhRoom.setOnClickListener(this);
+        gbRoom = findViewById(R.id.gb_room);
+        gbRoom.setOnClickListener(this);
         joinRoom();
     }
 
@@ -112,10 +118,11 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
             }
 
             @Override
-            protected void onUiFailed(RTCErrorCode rtcErrorCode) {}
+            protected void onUiFailed(RTCErrorCode rtcErrorCode) {
+            }
         });
 
-        RongRTCCapture.getInstance().setLocalVideoFrameListener(RTCDevice.getInstance().isTexture(),this);
+        RongRTCCapture.getInstance().setLocalVideoFrameListener(RTCDevice.getInstance().isTexture(), this);
         RongRTCCapture.getInstance().setLocalAudioPCMBufferListener(this);
         RongRTCCapture.getInstance().setRemoteAudioPCMBufferListener(this);
 
@@ -164,9 +171,9 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
                 ((RongRTCVideoView) view).setZOrderMediaOverlay(false);
                 localContainer.addView(view, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             }
-        }else if (view.getId() == R.id.live_room){
-            SharedPreferences sharedPreferences= getSharedPreferences("data", Context.MODE_PRIVATE);
-            final String userId=sharedPreferences.getString("userId","");
+        } else if (view.getId() == R.id.live_room) {
+            SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
+            final String userId = sharedPreferences.getString("userId", "");
 
             OkHttpUtils
                     .post()
@@ -187,7 +194,7 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
                                 java.lang.reflect.Type roomType = new TypeToken<Room>() {
                                 }.getType();
                                 Room room = MyUtils.getGson().fromJson(apiResult.getData().toString(), roomType);
-                                if (room.getCreateUserId().toString().equals(userId)){
+                                if (room.getCreateUserId().toString().equals(userId)) {
                                     String str = "TA在热忱陪着你，确定要离开房间吗？若离开，本次收益将退回。";
                                     new AlertDialog.Builder(context).setTitle("提醒")
                                             .setMessage(str)
@@ -206,9 +213,10 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
                                             })
                                             .setNegativeButton("暂不离开", new DialogInterface.OnClickListener() {
                                                 @Override
-                                                public void onClick(DialogInterface dialog, int which) {}
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                }
                                             }).show();
-                                }else if (room.getJoinUserId().toString().equals(userId)){
+                                } else if (room.getJoinUserId().toString().equals(userId)) {
                                     String str = "离开房间您将失去Ta的陪伴，确定要残忍离开吗？";
                                     new AlertDialog.Builder(context).setTitle("提醒")
                                             .setMessage(str)
@@ -230,7 +238,8 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
                                             .setNegativeButton("继续陪伴", new DialogInterface.OnClickListener() {
 
                                                 @Override
-                                                public void onClick(DialogInterface dialog, int which) {}
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                }
                                             }).show();
                                 }
                             } else {
@@ -253,14 +262,35 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
                                         .setNegativeButton("返回", new DialogInterface.OnClickListener() {
 
                                             @Override
-                                            public void onClick(DialogInterface dialog, int which) {}
+                                            public void onClick(DialogInterface dialog, int which) {
+                                            }
                                         }).show();
                             }
                         }
                     });
-        }else if (view.getId() == R.id.qh_room){
+        } else if (view.getId() == R.id.qh_room) {
+            if (qianhou_flag) {
+                qhRoom.setImageDrawable(getResources().getDrawable(R.mipmap.qianhou_active));
+            } else {
+                qhRoom.setImageDrawable(getResources().getDrawable(R.mipmap.qianhou));
+            }
+            qianhou_flag = !qianhou_flag;
             RongRTCCapture.getInstance().switchCamera();
+        } else if (view.getId() == R.id.gb_room) {
+            if (guanbi_flag) {
+                gbRoom.setImageDrawable(getResources().getDrawable(R.mipmap.guanbi_active));
+            } else {
+                gbRoom.setImageDrawable(getResources().getDrawable(R.mipmap.guanbi));
+            }
+            guanbi_flag = !guanbi_flag;
+            RongRTCCapture.getInstance().muteLocalVideo(guanbi_flag);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        RongRTCCapture.getInstance().stopCameraCapture();
     }
 
     @Override
@@ -268,6 +298,12 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
         super.onDestroy();
         removeListener();
         quitRoom();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        RongRTCLocalSourceManager.getInstance().startCapture();
     }
 
     private void addRemoteUsersView() {
@@ -386,8 +422,8 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
                 remotes.removeView(inputStream.getRongRTCVideoView());
             }
         }
-        SharedPreferences sharedPreferences= getSharedPreferences("data", Context.MODE_PRIVATE);
-        final String userId=sharedPreferences.getString("userId","");
+        SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
+        final String userId = sharedPreferences.getString("userId", "");
         OkHttpUtils
                 .post()
                 .url(Api.apiHost + Api.findRoomByNum)
@@ -407,7 +443,7 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
                             java.lang.reflect.Type roomType = new TypeToken<Room>() {
                             }.getType();
                             Room room = MyUtils.getGson().fromJson(apiResult.getData().toString(), roomType);
-                            if (room.getJoinUserId().toString().equals(userId)){
+                            if (room.getJoinUserId().toString().equals(userId)) {
                                 Toast.makeText(RoomInfoActivity.this, "房主已退出房间", Toast.LENGTH_SHORT).show();
                                 removeListener();
                                 quitRoom();
@@ -450,8 +486,8 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
     @Override
     public void onBackPressed() {
 
-        SharedPreferences sharedPreferences= getSharedPreferences("data", Context.MODE_PRIVATE);
-        final String userId=sharedPreferences.getString("userId","");
+        SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
+        final String userId = sharedPreferences.getString("userId", "");
 
         OkHttpUtils
                 .post()
@@ -472,7 +508,7 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
                             java.lang.reflect.Type roomType = new TypeToken<Room>() {
                             }.getType();
                             Room room = MyUtils.getGson().fromJson(apiResult.getData().toString(), roomType);
-                            if (room.getCreateUserId().toString().equals(userId)){
+                            if (room.getCreateUserId().toString().equals(userId)) {
                                 String str = "TA在热忱陪着你，确定要离开房间吗？若离开，本次收益将退回。";
                                 new AlertDialog.Builder(context).setTitle("提醒")
                                         .setMessage(str)
@@ -491,9 +527,10 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
                                         })
                                         .setNegativeButton("暂不离开", new DialogInterface.OnClickListener() {
                                             @Override
-                                            public void onClick(DialogInterface dialog, int which) {}
+                                            public void onClick(DialogInterface dialog, int which) {
+                                            }
                                         }).show();
-                            }else if (room.getJoinUserId().toString().equals(userId)){
+                            } else if (room.getJoinUserId().toString().equals(userId)) {
                                 String str = "离开房间您将失去Ta的陪伴，确定要残忍离开吗？";
                                 new AlertDialog.Builder(context).setTitle("提醒")
                                         .setMessage(str)
@@ -515,7 +552,8 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
                                         .setNegativeButton("继续陪伴", new DialogInterface.OnClickListener() {
 
                                             @Override
-                                            public void onClick(DialogInterface dialog, int which) {}
+                                            public void onClick(DialogInterface dialog, int which) {
+                                            }
                                         }).show();
                             }
                         } else {
@@ -538,7 +576,8 @@ public class RoomInfoActivity extends AppCompatActivity implements RongRTCEvents
                                     .setNegativeButton("返回", new DialogInterface.OnClickListener() {
 
                                         @Override
-                                        public void onClick(DialogInterface dialog, int which) {}
+                                        public void onClick(DialogInterface dialog, int which) {
+                                        }
                                     }).show();
                         }
                     }
