@@ -15,6 +15,7 @@ import com.google.gson.reflect.TypeToken;
 import com.lemi.interact.R;
 import com.lemi.interact.activity.AddRoomActivity;
 import com.lemi.interact.activity.PersonalActivity;
+import com.lemi.interact.activity.RoomActivity;
 import com.lemi.interact.activity.RoomInfoActivity;
 import com.lemi.interact.api.Api;
 import com.lemi.interact.bean.ApiResult;
@@ -184,6 +185,7 @@ public class RecyclerViewGridAdapter extends RecyclerView.Adapter<RecyclerViewGr
                         intent.putExtra("roomId", roomId);
                         intent.setClass(mContext, RoomInfoActivity.class);
                         mAppCompatActivity.startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
+                        mAppCompatActivity.finish();
                     }
 
                     @Override
@@ -195,7 +197,7 @@ public class RecyclerViewGridAdapter extends RecyclerView.Adapter<RecyclerViewGr
         });
     }
 
-    private void getRoomById(Integer roomId){
+    private void getRoomById(Integer roomId) {
         OkHttpUtils
                 .post()
                 .url(Api.apiHost + Api.findRoomById)
@@ -212,31 +214,37 @@ public class RecyclerViewGridAdapter extends RecyclerView.Adapter<RecyclerViewGr
                         }.getType();
                         ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
                         if (apiResult.getCode().intValue() == 0) {
-                            java.lang.reflect.Type roomType = new TypeToken<Room>() {
-                            }.getType();
-                            Room room = MyUtils.getGson().fromJson(apiResult.getData().toString(), roomType);
-                            String num = room.getNum();
-                            if (Seeting.list.indexOf(num) != -1){
-                                if (room.getCreateUserId() != null){
+
+                            if (apiResult.getData() != null && !apiResult.getData().toString().equals("")) {
+
+                                java.lang.reflect.Type roomType = new TypeToken<Room>() {
+                                }.getType();
+                                Room room = MyUtils.getGson().fromJson(apiResult.getData().toString(), roomType);
+                                String num = room.getNum();
+                                if (Seeting.list.indexOf(num) != -1) {
+                                    if (room.getCreateUserId() != null) {
+                                        Intent intent = new Intent();
+                                        intent.putExtra("roomId", room.getId() + "");
+                                        intent.putExtra("createUserId", room.getCreateUserId() + "");
+                                        intent.putExtra("categoryId", mCategoryId);
+                                        intent.setClass(mContext, PersonalActivity.class);
+                                        mAppCompatActivity.startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
+                                    } else {
+                                        Intent intent = new Intent();
+                                        intent.setClass(mContext, AddRoomActivity.class);
+                                        intent.putExtra("roomId", room.getId() + "");
+                                        mAppCompatActivity.startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
+                                    }
+                                } else {
                                     Intent intent = new Intent();
                                     intent.putExtra("roomId", room.getId() + "");
                                     intent.putExtra("createUserId", room.getCreateUserId() + "");
                                     intent.putExtra("categoryId", mCategoryId);
                                     intent.setClass(mContext, PersonalActivity.class);
                                     mAppCompatActivity.startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
-                                }else {
-                                    Intent intent = new Intent();
-                                    intent.setClass(mContext, AddRoomActivity.class);
-                                    intent.putExtra("roomId", room.getId() + "");
-                                    mAppCompatActivity.startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
                                 }
                             }else {
-                                Intent intent = new Intent();
-                                intent.putExtra("roomId", room.getId() + "");
-                                intent.putExtra("createUserId", room.getCreateUserId() + "");
-                                intent.putExtra("categoryId", mCategoryId);
-                                intent.setClass(mContext, PersonalActivity.class);
-                                mAppCompatActivity.startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
+                                Toast.makeText(mContext, "房间已解散", Toast.LENGTH_SHORT).show();
                             }
                         }
                     }
@@ -261,7 +269,7 @@ public class RecyclerViewGridAdapter extends RecyclerView.Adapter<RecyclerViewGr
         return 0;
     }
 
-    public class GridViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class GridViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final TextView itemRoomNum;
         private final MyImgView itemPhoto;
@@ -299,14 +307,14 @@ public class RecyclerViewGridAdapter extends RecyclerView.Adapter<RecyclerViewGr
                 itemRoomNum.setText("房间号：" + data.getNum());
             }
 
-            if (data.getDistance() != null){
-                distance.setText("距离" + Math.ceil(data.getDistance()/1000) + "km");
-            }else {
+            if (data.getDistance() != null) {
+                distance.setText("距离" + Math.ceil(data.getDistance() / 1000) + "km");
+            } else {
                 distance.setText("距离0km");
             }
-            if (data.getCity() != null){
+            if (data.getCity() != null) {
                 city.setText(data.getCity());
-            }else {
+            } else {
 
             }
             if (data.getPhoto() != null && !"".equals(data.getPhoto())) {
@@ -329,9 +337,9 @@ public class RecyclerViewGridAdapter extends RecyclerView.Adapter<RecyclerViewGr
                 }
             }
 
-            if (data.getCreateUserId() != null && data.getJoinNickName() != null && !"".equals(data.getJoinNickName())){
+            if (data.getCreateUserId() != null && data.getJoinNickName() != null && !"".equals(data.getJoinNickName())) {
                 linkIcon.setImageResource(R.mipmap.yilianje);
-            }else {
+            } else {
                 linkIcon.setImageResource(R.mipmap.lianjie);
             }
 
@@ -361,7 +369,7 @@ public class RecyclerViewGridAdapter extends RecyclerView.Adapter<RecyclerViewGr
             int position = getAdapterPosition();
             RoomResponse roomResponse = mDateBeen.get(position);
             final Integer roomId = roomResponse.getRoomId();
-            switch (view.getId()){
+            switch (view.getId()) {
                 case R.id.item_photo:
                     itemPhoto.setEnabled(false);
                     getRoomById(roomId);
@@ -405,10 +413,12 @@ public class RecyclerViewGridAdapter extends RecyclerView.Adapter<RecyclerViewGr
                                                 req.sign = jsonObject.getString("sign");
                                                 api.sendReq(req);
                                                 String out_trade_no = jsonObject.getString("out_trade_no");
+                                                String roomNum = jsonObject.getString("room_num");
                                                 SharedPreferences sharedPreferences = mContext.getSharedPreferences("data", Context.MODE_PRIVATE);
                                                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                                                editor.putString("pay_type", "room");
+                                                editor.putString("pay_type","room");
                                                 editor.putString("out_trade_no",out_trade_no);
+                                                editor.putString("room_num",roomNum);
                                                 editor.commit();
                                                 Toast.makeText(mContext, "发起支付成功", Toast.LENGTH_SHORT).show();
                                             } catch (Exception e) {

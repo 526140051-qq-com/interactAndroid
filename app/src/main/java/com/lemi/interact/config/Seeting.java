@@ -12,10 +12,14 @@ public class Seeting {
     public static final String partner_ID = "1546763811";
 
     //融云APPID
-    public static final String RONG_APP_ID = "p5tvi9dspesq4";
+//    public static final String RONG_APP_ID = "p5tvi9dspesq4";
+
+    public static final String RONG_APP_ID = "e0x9wycfepdhq";
 
     //融云SECRET
-    public static final String RONG_APP_SECRET = "rwPRCQ0iA7";
+//    public static final String RONG_APP_SECRET = "rwPRCQ0iA7";
+
+    public static final String RONG_APP_SECRET = "7ROgh3uqy98";
 
     public static List<String> list;
 

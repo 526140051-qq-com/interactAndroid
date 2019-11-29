@@ -169,10 +169,12 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
                                         api.sendReq(req);
 
                                         String out_trade_no = jsonObject.getString("out_trade_no");
+                                        String roomNum = jsonObject.getString("room_num");
                                         SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
                                         SharedPreferences.Editor editor = sharedPreferences.edit();
-                                        editor.putString("pay_type", "room");
+                                        editor.putString("pay_type","room");
                                         editor.putString("out_trade_no",out_trade_no);
+                                        editor.putString("room_num",roomNum);
                                         editor.commit();
                                         Toast.makeText(context, "发起支付成功", Toast.LENGTH_SHORT).show();
                                     } catch (Exception e) {

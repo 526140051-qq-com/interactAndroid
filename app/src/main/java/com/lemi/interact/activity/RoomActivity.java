@@ -51,7 +51,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 import static com.lemi.interact.MainActivity.REQ_CODE_FOR_REGISTER;
 
-public class RoomActivity extends AppCompatActivity implements View.OnClickListener{
+public class RoomActivity extends AppCompatActivity implements View.OnClickListener {
 
     private RecyclerView recyclerView;
 
@@ -102,25 +102,26 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
             return;
         }
         Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        if(location == null){
+        if (location == null) {
             location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         }
-        if (location != null){
+        if (location != null) {
             longitude = location.getLongitude();
             latitude = location.getLatitude();
         }
 
-        SharedPreferences sharedPreferences= getSharedPreferences("data", Context.MODE_PRIVATE);
-        categoryId=sharedPreferences.getString("categoryId","");
+        SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
+        categoryId = sharedPreferences.getString("categoryId", "");
         if (categoryId != null && !"".equals(categoryId)) {
             initData(categoryId);
         }
 
     }
+
     private void initData(final String categoryId) {
         recyclerView = (RecyclerView) findViewById(R.id.recyler_view);
         roomCityName = (TextView) findViewById(R.id.room_city_name);
-        if (longitude != null && latitude != null){
+        if (longitude != null && latitude != null) {
             OkHttpUtils
                     .post()
                     .url(Api.apiHost + Api.getCityNameByL)
@@ -147,7 +148,7 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
                             initRoom();
                         }
                     });
-        }else {
+        } else {
             roomCityName.setText("全部");
             initRoom();
         }
@@ -161,8 +162,8 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
 
         search = (EditText) findViewById(R.id.search);
         search.clearFocus();
-        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(search.getWindowToken(),0);
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(search.getWindowToken(), 0);
 
         search.addTextChangedListener(new TextWatcher() {
             @Override
@@ -191,7 +192,7 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private void initRoom(){
+    private void initRoom() {
         String city = roomCityName.getText().toString();
         OkHttpUtils
                 .post()
@@ -199,7 +200,7 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
                 .addParams("categoryId", categoryId)
                 .addParams("longitude", longitude + "")
                 .addParams("latitude", latitude + "")
-                .addParams("city",city)
+                .addParams("city", city)
                 .build()
                 .execute(new StringCallback() {
                     @Override
@@ -215,7 +216,7 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
                             String jsonString = MyUtils.getGson().toJson(apiResult.getData());
                             RoomResponse[] array = MyUtils.getGson().fromJson(jsonString, RoomResponse[].class);
                             roomList = Arrays.asList(array);
-                            loadgrideDate(false, true,categoryId);
+                            loadgrideDate(false, true, categoryId);
                         } else {
                             Toast.makeText(RoomActivity.this, apiResult.getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -236,15 +237,15 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
             mHandler.sendEmptyMessage(1);
             String num = search.getText().toString();
             String city = roomCityName.getText().toString();
-            if (num!=null&&!"".equals(num.trim())){
+            if (num != null && !"".equals(num.trim())) {
                 OkHttpUtils
                         .post()
                         .url(Api.apiHost + Api.findRoom)
                         .addParams("categoryId", categoryId)
                         .addParams("longitude", longitude + "")
                         .addParams("latitude", latitude + "")
-                        .addParams("num",num)
-                        .addParams("city",city)
+                        .addParams("num", num)
+                        .addParams("city", city)
                         .build()
                         .execute(new StringCallback() {
                             @Override
@@ -260,20 +261,20 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
                                     String jsonString = MyUtils.getGson().toJson(apiResult.getData());
                                     RoomResponse[] array = MyUtils.getGson().fromJson(jsonString, RoomResponse[].class);
                                     roomList = Arrays.asList(array);
-                                    loadgrideDate(false, true,categoryId);
+                                    loadgrideDate(false, true, categoryId);
                                 } else {
                                     Toast.makeText(RoomActivity.this, apiResult.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
-            }else {
+            } else {
                 OkHttpUtils
                         .post()
                         .url(Api.apiHost + Api.findRoom)
                         .addParams("categoryId", categoryId)
                         .addParams("longitude", longitude + "")
                         .addParams("latitude", latitude + "")
-                        .addParams("city",city)
+                        .addParams("city", city)
                         .build()
                         .execute(new StringCallback() {
                             @Override
@@ -289,7 +290,7 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
                                     String jsonString = MyUtils.getGson().toJson(apiResult.getData());
                                     RoomResponse[] array = MyUtils.getGson().fromJson(jsonString, RoomResponse[].class);
                                     roomList = Arrays.asList(array);
-                                    loadgrideDate(false, true,categoryId);
+                                    loadgrideDate(false, true, categoryId);
                                 } else {
                                     Toast.makeText(RoomActivity.this, apiResult.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
@@ -299,10 +300,10 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    private void loadgrideDate(Boolean isversion, Boolean orientation,String categoryId) {
+    private void loadgrideDate(Boolean isversion, Boolean orientation, String categoryId) {
         recyclerView.addItemDecoration(new SpacesItemDecoration(5, 5));
 
-        RecyclerViewGridAdapter recyclerViewGridAdapter = new RecyclerViewGridAdapter(this,this,categoryId, roomList);
+        RecyclerViewGridAdapter recyclerViewGridAdapter = new RecyclerViewGridAdapter(this, this, categoryId, roomList);
         recyclerView.setAdapter(recyclerViewGridAdapter);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
         gridLayoutManager.setReverseLayout(isversion);
@@ -310,10 +311,12 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
         recyclerView.setLayoutManager(gridLayoutManager);
 
     }
+
     @Override
     public void onBackPressed() {
         finish();
     }
+
     @Override
     public void onClick(View v) {
 
@@ -366,15 +369,15 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
                 roomCityName.setText(city.trim());
                 String num = search.getText().toString();
 
-                if (num!=null&&!"".equals(num.trim())){
+                if (num != null && !"".equals(num.trim())) {
                     OkHttpUtils
                             .post()
                             .url(Api.apiHost + Api.findRoom)
                             .addParams("categoryId", categoryId)
                             .addParams("longitude", longitude + "")
                             .addParams("latitude", latitude + "")
-                            .addParams("num",num)
-                            .addParams("city",city.trim())
+                            .addParams("num", num)
+                            .addParams("city", city.trim())
                             .build()
                             .execute(new StringCallback() {
                                 @Override
@@ -390,20 +393,20 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
                                         String jsonString = MyUtils.getGson().toJson(apiResult.getData());
                                         RoomResponse[] array = MyUtils.getGson().fromJson(jsonString, RoomResponse[].class);
                                         roomList = Arrays.asList(array);
-                                        loadgrideDate(false, true,categoryId);
+                                        loadgrideDate(false, true, categoryId);
                                     } else {
                                         Toast.makeText(RoomActivity.this, apiResult.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
-                }else {
+                } else {
                     OkHttpUtils
                             .post()
                             .url(Api.apiHost + Api.findRoom)
                             .addParams("categoryId", categoryId)
                             .addParams("longitude", longitude + "")
                             .addParams("latitude", latitude + "")
-                            .addParams("city",city.trim())
+                            .addParams("city", city.trim())
                             .build()
                             .execute(new StringCallback() {
                                 @Override
@@ -419,7 +422,7 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
                                         String jsonString = MyUtils.getGson().toJson(apiResult.getData());
                                         RoomResponse[] array = MyUtils.getGson().fromJson(jsonString, RoomResponse[].class);
                                         roomList = Arrays.asList(array);
-                                        loadgrideDate(false, true,categoryId);
+                                        loadgrideDate(false, true, categoryId);
                                     } else {
                                         Toast.makeText(RoomActivity.this, apiResult.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
@@ -431,8 +434,8 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    private boolean isGpsAble(LocationManager lm){
-        return lm.isProviderEnabled(LocationManager.GPS_PROVIDER)? true:false;
+    private boolean isGpsAble(LocationManager lm) {
+        return lm.isProviderEnabled(LocationManager.GPS_PROVIDER) ? true : false;
     }
 
     private void openGPS2() {

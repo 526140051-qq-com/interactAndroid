@@ -1,10 +1,10 @@
 package com.lemi.interact.api;
 
 public class Api {
-
-    public static String apiHost = "http://47.104.192.82:8080/";
-
-    public static String h5Host = "http://web.cmbc.joylingame.com/#";
+    public static String apiHost = "http://116.62.193.50:8080/";
+//    public static String apiHost = "http://47.104.192.82:8080/";
+    public static String h5Host = "http://116.62.193.50:8082/#";
+//    public static String h5Host = "http://web.cmbc.joylingame.com/#";
 
     public static String login = "user/login";
 
@@ -35,6 +35,8 @@ public class Api {
     public static String isPayForRoom = "room/isPayForRoom";
 
     public static String removeRoomJoin = "room/removeRoomJoin";
+
+    public static String removeRoomJoinByNum = "room/removeRoomJoinByNum";
 
     public static String quitRoom = "room/quitRoom";
 

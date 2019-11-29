@@ -280,6 +280,7 @@ public class AddRoomActivity extends Activity implements View.OnClickListener {
                 RongIMClient.connect(token, new RongIMClient.ConnectCallback() {
                     @Override
                     public void onTokenIncorrect() {
+                        Toast.makeText(AddRoomActivity.this, "Token验证失败，请重新获取！", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -295,6 +296,7 @@ public class AddRoomActivity extends Activity implements View.OnClickListener {
                     @Override
                     public void onError(RongIMClient.ErrorCode errorCode) {
                         System.out.println(errorCode.getMessage());
+                        Toast.makeText(AddRoomActivity.this, "创建房间失败", Toast.LENGTH_SHORT).show();
                     }
                 });
             }

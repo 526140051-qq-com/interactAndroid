@@ -128,8 +128,6 @@ public class RoomInfoActivity extends Activity implements RongRTCEventsListener,
 
         RongRTCCapture.getInstance().setEnableSpeakerphone(true);
         RongRTCCapture.getInstance().startCameraCapture();
-
-        //RongRTCCapture.getInstance().switchCamera();//前后摄像头切换
     }
 
     /**
@@ -174,7 +172,6 @@ public class RoomInfoActivity extends Activity implements RongRTCEventsListener,
         } else if (view.getId() == R.id.live_room) {
             SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
             final String userId = sharedPreferences.getString("userId", "");
-
             OkHttpUtils
                     .post()
                     .url(Api.apiHost + Api.findRoomByNum)
@@ -191,80 +188,78 @@ public class RoomInfoActivity extends Activity implements RongRTCEventsListener,
                             }.getType();
                             ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
                             if (apiResult.getCode().intValue() == 0) {
-                                java.lang.reflect.Type roomType = new TypeToken<Room>() {
-                                }.getType();
-                                Room room = MyUtils.getGson().fromJson(apiResult.getData().toString(), roomType);
-                                if (room.getCreateUserId().toString().equals(userId)) {
-                                    String str = "TA在热忱陪着你，确定要离开房间吗？若离开，本次收益将退回。";
-                                    new AlertDialog.Builder(context).setTitle("提醒")
-                                            .setMessage(str)
-                                            .setIcon(android.R.drawable.ic_dialog_info)
-                                            .setPositiveButton("确认离开", new DialogInterface.OnClickListener() {
+                                if (apiResult.getData() != null && !apiResult.getData().toString().equals("")) {
+                                    java.lang.reflect.Type roomType = new TypeToken<Room>(){}.getType();
+                                    Room room = MyUtils.getGson().fromJson(apiResult.getData().toString(), roomType);
+                                    if (room.getCreateUserId() != null && room.getCreateUserId().toString().equals(userId)) {
+                                        String str = "TA在热忱陪着你，确定要离开房间吗？若离开，本次收益将退回。";
+                                        new AlertDialog.Builder(context).setTitle("提醒")
+                                                .setMessage(str)
+                                                .setIcon(android.R.drawable.ic_dialog_info)
+                                                .setPositiveButton("确认离开", new DialogInterface.OnClickListener() {
 
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    removeListener();
-                                                    quitRoom();
-                                                    Intent intent4 = new Intent();
-                                                    intent4.setClass(RoomInfoActivity.this, RoomActivity.class);
-                                                    startActivityForResult(intent4, REQ_CODE_FOR_REGISTER);
-                                                    finish();
-                                                }
-                                            })
-                                            .setNegativeButton("暂不离开", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                }
-                                            }).show();
-                                } else if (room.getJoinUserId().toString().equals(userId)) {
-                                    String str = "离开房间您将失去Ta的陪伴，确定要残忍离开吗？";
-                                    new AlertDialog.Builder(context).setTitle("提醒")
-                                            .setMessage(str)
-                                            .setIcon(android.R.drawable.ic_dialog_info)
-                                            .setPositiveButton("残忍离开", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        removeListener();
+                                                        quitRoom();
+                                                        Intent intent4 = new Intent();
+                                                        intent4.setClass(RoomInfoActivity.this, RoomActivity.class);
+                                                        startActivityForResult(intent4, REQ_CODE_FOR_REGISTER);
+                                                        finish();
+                                                    }
+                                                })
+                                                .setNegativeButton("暂不离开", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                    }
+                                                }).show();
+                                    } else if (room.getJoinUserId() != null && room.getJoinUserId().toString().equals(userId)) {
+                                        String str = "离开房间您将失去Ta的陪伴，确定要残忍离开吗？";
+                                        new AlertDialog.Builder(context).setTitle("提醒")
+                                                .setMessage(str)
+                                                .setIcon(android.R.drawable.ic_dialog_info)
+                                                .setPositiveButton("残忍离开", new DialogInterface.OnClickListener() {
 
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    removeListener();
-                                                    quitRoom();
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        removeListener();
+                                                        quitRoom();
+                                                        Intent intent4 = new Intent();
+                                                        intent4.setClass(RoomInfoActivity.this, RoomActivity.class);
+                                                        startActivityForResult(intent4, REQ_CODE_FOR_REGISTER);
+                                                        finish();
 
-                                                    Intent intent4 = new Intent();
-                                                    intent4.setClass(RoomInfoActivity.this, RoomActivity.class);
-                                                    startActivityForResult(intent4, REQ_CODE_FOR_REGISTER);
-                                                    finish();
+                                                    }
+                                                })
+                                                .setNegativeButton("继续陪伴", new DialogInterface.OnClickListener() {
 
-                                                }
-                                            })
-                                            .setNegativeButton("继续陪伴", new DialogInterface.OnClickListener() {
-
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                }
-                                            }).show();
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                    }
+                                                }).show();
+                                    }else {
+                                        removeListener();
+                                        quit();
+                                        Intent intent4 = new Intent();
+                                        intent4.setClass(RoomInfoActivity.this, RoomActivity.class);
+                                        startActivityForResult(intent4, REQ_CODE_FOR_REGISTER);
+                                        finish();
+                                    }
+                                } else {
+                                    removeListener();
+                                    quit();
+                                    Intent intent4 = new Intent();
+                                    intent4.setClass(RoomInfoActivity.this, RoomActivity.class);
+                                    startActivityForResult(intent4, REQ_CODE_FOR_REGISTER);
+                                    finish();
                                 }
                             } else {
-                                new AlertDialog.Builder(context).setTitle("提醒")
-                                        .setMessage("确认离开房间吗？")
-                                        .setIcon(android.R.drawable.ic_dialog_info)
-                                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                removeListener();
-                                                quitRoom();
-                                                Intent intent4 = new Intent();
-                                                intent4.setClass(RoomInfoActivity.this, RoomActivity.class);
-                                                startActivityForResult(intent4, REQ_CODE_FOR_REGISTER);
-                                                finish();
-
-                                            }
-                                        })
-                                        .setNegativeButton("返回", new DialogInterface.OnClickListener() {
-
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                            }
-                                        }).show();
+                                removeListener();
+                                quit();
+                                Intent intent4 = new Intent();
+                                intent4.setClass(RoomInfoActivity.this, RoomActivity.class);
+                                startActivityForResult(intent4, REQ_CODE_FOR_REGISTER);
+                                finish();
                             }
                         }
                     });
@@ -422,40 +417,13 @@ public class RoomInfoActivity extends Activity implements RongRTCEventsListener,
                 remotes.removeView(inputStream.getRongRTCVideoView());
             }
         }
-        SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
-        final String userId = sharedPreferences.getString("userId", "");
-        OkHttpUtils
-                .post()
-                .url(Api.apiHost + Api.findRoomByNum)
-                .addParams("num", mRoomId)
-                .build()
-                .execute(new StringCallback() {
-                    @Override
-                    public void onError(okhttp3.Call call, Exception e, int id) {
-                    }
-
-                    @Override
-                    public void onResponse(String response, int id) {
-                        java.lang.reflect.Type type = new TypeToken<ApiResult>() {
-                        }.getType();
-                        ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
-                        if (apiResult.getCode().intValue() == 0) {
-                            java.lang.reflect.Type roomType = new TypeToken<Room>() {
-                            }.getType();
-                            Room room = MyUtils.getGson().fromJson(apiResult.getData().toString(), roomType);
-                            if (room.getJoinUserId().toString().equals(userId)) {
-                                Toast.makeText(RoomInfoActivity.this, "房主已退出房间", Toast.LENGTH_SHORT).show();
-                                removeListener();
-                                quitRoom();
-                                Intent intent = new Intent();
-                                intent.setClass(RoomInfoActivity.this, RoomActivity.class);
-                                startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
-                                finish();
-                            }
-                        }
-                    }
-                });
-
+        Toast.makeText(RoomInfoActivity.this, "房主已退出房间", Toast.LENGTH_SHORT).show();
+        removeListener();
+        quit();
+        Intent intent4 = new Intent();
+        intent4.setClass(RoomInfoActivity.this, RoomActivity.class);
+        startActivityForResult(intent4, REQ_CODE_FOR_REGISTER);
+        finish();
     }
 
     @Override
@@ -488,7 +456,6 @@ public class RoomInfoActivity extends Activity implements RongRTCEventsListener,
 
         SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
         final String userId = sharedPreferences.getString("userId", "");
-
         OkHttpUtils
                 .post()
                 .url(Api.apiHost + Api.findRoomByNum)
@@ -505,80 +472,78 @@ public class RoomInfoActivity extends Activity implements RongRTCEventsListener,
                         }.getType();
                         ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
                         if (apiResult.getCode().intValue() == 0) {
-                            java.lang.reflect.Type roomType = new TypeToken<Room>() {
-                            }.getType();
-                            Room room = MyUtils.getGson().fromJson(apiResult.getData().toString(), roomType);
-                            if (room.getCreateUserId().toString().equals(userId)) {
-                                String str = "TA在热忱陪着你，确定要离开房间吗？若离开，本次收益将退回。";
-                                new AlertDialog.Builder(context).setTitle("提醒")
-                                        .setMessage(str)
-                                        .setIcon(android.R.drawable.ic_dialog_info)
-                                        .setPositiveButton("确认离开", new DialogInterface.OnClickListener() {
+                            if (apiResult.getData() != null && !apiResult.getData().toString().equals("")) {
+                                java.lang.reflect.Type roomType = new TypeToken<Room>(){}.getType();
+                                Room room = MyUtils.getGson().fromJson(apiResult.getData().toString(), roomType);
+                                if (room.getCreateUserId() != null && room.getCreateUserId().toString().equals(userId)) {
+                                    String str = "TA在热忱陪着你，确定要离开房间吗？若离开，本次收益将退回。";
+                                    new AlertDialog.Builder(context).setTitle("提醒")
+                                            .setMessage(str)
+                                            .setIcon(android.R.drawable.ic_dialog_info)
+                                            .setPositiveButton("确认离开", new DialogInterface.OnClickListener() {
 
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                removeListener();
-                                                quitRoom();
-                                                Intent intent4 = new Intent();
-                                                intent4.setClass(RoomInfoActivity.this, RoomActivity.class);
-                                                startActivityForResult(intent4, REQ_CODE_FOR_REGISTER);
-                                                finish();
-                                            }
-                                        })
-                                        .setNegativeButton("暂不离开", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                            }
-                                        }).show();
-                            } else if (room.getJoinUserId().toString().equals(userId)) {
-                                String str = "离开房间您将失去Ta的陪伴，确定要残忍离开吗？";
-                                new AlertDialog.Builder(context).setTitle("提醒")
-                                        .setMessage(str)
-                                        .setIcon(android.R.drawable.ic_dialog_info)
-                                        .setPositiveButton("残忍离开", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    removeListener();
+                                                    quitRoom();
+                                                    Intent intent4 = new Intent();
+                                                    intent4.setClass(RoomInfoActivity.this, RoomActivity.class);
+                                                    startActivityForResult(intent4, REQ_CODE_FOR_REGISTER);
+                                                    finish();
+                                                }
+                                            })
+                                            .setNegativeButton("暂不离开", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                }
+                                            }).show();
+                                } else if (room.getJoinUserId() != null && room.getJoinUserId().toString().equals(userId)) {
+                                    String str = "离开房间您将失去Ta的陪伴，确定要残忍离开吗？";
+                                    new AlertDialog.Builder(context).setTitle("提醒")
+                                            .setMessage(str)
+                                            .setIcon(android.R.drawable.ic_dialog_info)
+                                            .setPositiveButton("残忍离开", new DialogInterface.OnClickListener() {
 
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                removeListener();
-                                                quitRoom();
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    removeListener();
+                                                    quitRoom();
+                                                    Intent intent4 = new Intent();
+                                                    intent4.setClass(RoomInfoActivity.this, RoomActivity.class);
+                                                    startActivityForResult(intent4, REQ_CODE_FOR_REGISTER);
+                                                    finish();
 
-                                                Intent intent4 = new Intent();
-                                                intent4.setClass(RoomInfoActivity.this, RoomActivity.class);
-                                                startActivityForResult(intent4, REQ_CODE_FOR_REGISTER);
-                                                finish();
+                                                }
+                                            })
+                                            .setNegativeButton("继续陪伴", new DialogInterface.OnClickListener() {
 
-                                            }
-                                        })
-                                        .setNegativeButton("继续陪伴", new DialogInterface.OnClickListener() {
-
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                            }
-                                        }).show();
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                }
+                                            }).show();
+                                }else {
+                                    removeListener();
+                                    quit();
+                                    Intent intent4 = new Intent();
+                                    intent4.setClass(RoomInfoActivity.this, RoomActivity.class);
+                                    startActivityForResult(intent4, REQ_CODE_FOR_REGISTER);
+                                    finish();
+                                }
+                            } else {
+                                removeListener();
+                                quit();
+                                Intent intent4 = new Intent();
+                                intent4.setClass(RoomInfoActivity.this, RoomActivity.class);
+                                startActivityForResult(intent4, REQ_CODE_FOR_REGISTER);
+                                finish();
                             }
                         } else {
-                            new AlertDialog.Builder(context).setTitle("提醒")
-                                    .setMessage("确认离开房间吗？")
-                                    .setIcon(android.R.drawable.ic_dialog_info)
-                                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            removeListener();
-                                            quitRoom();
-                                            Intent intent4 = new Intent();
-                                            intent4.setClass(RoomInfoActivity.this, RoomActivity.class);
-                                            startActivityForResult(intent4, REQ_CODE_FOR_REGISTER);
-                                            finish();
-
-                                        }
-                                    })
-                                    .setNegativeButton("返回", new DialogInterface.OnClickListener() {
-
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                        }
-                                    }).show();
+                            removeListener();
+                            quit();
+                            Intent intent4 = new Intent();
+                            intent4.setClass(RoomInfoActivity.this, RoomActivity.class);
+                            startActivityForResult(intent4, REQ_CODE_FOR_REGISTER);
+                            finish();
                         }
                     }
                 });
@@ -586,7 +551,6 @@ public class RoomInfoActivity extends Activity implements RongRTCEventsListener,
     }
 
     private void quit() {
-
         RongRTCEngine.getInstance().quitRoom(mRongRTCRoom.getRoomId(), new RongRTCResultUICallBack() {
             @Override
             public void onUiSuccess() {
@@ -621,10 +585,7 @@ public class RoomInfoActivity extends Activity implements RongRTCEventsListener,
                         ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
                         if (apiResult.getCode().intValue() == 0) {
                             quit();
-                        } else {
-                            //Toast.makeText(RoomInfoActivity.this, apiResult.getMessage(), Toast.LENGTH_SHORT).show();
                         }
-
                     }
                 });
     }

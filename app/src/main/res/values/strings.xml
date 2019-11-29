@@ -198,4 +198,6 @@
     <string name="white_board_delete">delete</string>
 
     <string name="user_video_custom">Customize video</string>
+
+    <string name="filepath">com.lemi.interact.fileprovider</string>
 </resources>
