@@ -157,6 +157,12 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
         addRoomBtn = (ImageButton) findViewById(R.id.add_room_btn);
         addRoomBtn.setOnClickListener(this);
 
+        if(categoryId!=null&&!categoryId.equals("4")){
+            addRoomBtn.setVisibility(View.GONE);
+        }else {
+            addRoomBtn.setVisibility(View.VISIBLE);
+        }
+
         roomListBack = (ImageView) findViewById(R.id.room_list_back);
         roomListBack.setOnClickListener(this);
 

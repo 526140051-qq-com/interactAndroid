@@ -417,13 +417,59 @@ public class RoomInfoActivity extends Activity implements RongRTCEventsListener,
                 remotes.removeView(inputStream.getRongRTCVideoView());
             }
         }
-        Toast.makeText(RoomInfoActivity.this, "房主已退出房间", Toast.LENGTH_SHORT).show();
-        removeListener();
-        quit();
-        Intent intent4 = new Intent();
-        intent4.setClass(RoomInfoActivity.this, RoomActivity.class);
-        startActivityForResult(intent4, REQ_CODE_FOR_REGISTER);
-        finish();
+        SharedPreferences sharedPreferences= getSharedPreferences("data", Context.MODE_PRIVATE);
+        final String userId=sharedPreferences.getString("userId","");
+        OkHttpUtils
+                .post()
+                .url(Api.apiHost + Api.findRoomByNum)
+                .addParams("num", mRoomId)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(okhttp3.Call call, Exception e, int id) {
+                    }
+                    @Override
+                    public void onResponse(String response, int id) {
+                        java.lang.reflect.Type type = new TypeToken<ApiResult>() {
+                        }.getType();
+                        ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
+                        if (apiResult.getCode().intValue() == 0) {
+                            if (apiResult.getData() != null && !apiResult.getData().toString().equals("")) {
+                                java.lang.reflect.Type roomType = new TypeToken<Room>(){}.getType();
+                                Room room = MyUtils.getGson().fromJson(apiResult.getData().toString(), roomType);
+                                if (room.getJoinUserId()!=null&&room.getJoinUserId().intValue()==Integer.parseInt(userId)){
+                                    Toast.makeText(RoomInfoActivity.this, "房主已退出房间", Toast.LENGTH_SHORT).show();
+                                    removeListener();
+                                    quit();
+                                    Intent intent = new Intent();
+                                    intent.setClass(RoomInfoActivity.this, RoomActivity.class);
+                                    startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
+                                    finish();
+                                }
+                                if (room.getCreateUserId()!=null&&room.getCreateUserId().intValue()==Integer.parseInt(userId)){
+                                    Toast.makeText(RoomInfoActivity.this, "对方已退出房间", Toast.LENGTH_SHORT).show();
+                                }
+                            }else {
+                                Toast.makeText(RoomInfoActivity.this, "房间已解散", Toast.LENGTH_SHORT).show();
+                                removeListener();
+                                quit();
+                                Intent intent = new Intent();
+                                intent.setClass(RoomInfoActivity.this, RoomActivity.class);
+                                startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
+                                finish();
+                            }
+                        } else {
+                            Toast.makeText(RoomInfoActivity.this, "房间已解散", Toast.LENGTH_SHORT).show();
+                            removeListener();
+                            quit();
+                            Intent intent = new Intent();
+                            intent.setClass(RoomInfoActivity.this, RoomActivity.class);
+                            startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
+                            finish();
+                        }
+                    }
+                });
+
     }
 
     @Override
