@@ -34,10 +34,9 @@ import com.lemi.interact.util.GetPathFromUri4kitkat;
 
 import java.io.File;
 
-import static android.support.v4.content.FileProvider.getUriForFile;
 import static com.lemi.interact.MainActivity.REQ_CODE_FOR_REGISTER;
 
-public class UserInfoActivity extends Activity implements View.OnClickListener {
+public class WithdrawActivity extends Activity implements View.OnClickListener{
 
     private WebView webView;
 
@@ -60,13 +59,13 @@ public class UserInfoActivity extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_user_info);
+        setContentView(R.layout.activity_withdraw);
         context = this;
         init();
     }
 
     private void init() {
-        webView = (WebView) findViewById(R.id.userinfo_web);
+        webView = (WebView) findViewById(R.id.draw_web);
 
         SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
         String userId = sharedPreferences.getString("userId", "");
@@ -86,7 +85,7 @@ public class UserInfoActivity extends Activity implements View.OnClickListener {
         }
         webView.addJavascriptInterface(new JsInteration(), "android");
         webView.setWebViewClient(new MyWebViewClient());
-        String url = Api.h5Host + Api.edit;
+        String url = Api.h5Host + Api.withdraw;
         webView.loadUrl(url);
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
@@ -111,7 +110,7 @@ public class UserInfoActivity extends Activity implements View.OnClickListener {
                 mFilePathCallback = uploadMsg;
             }
         });
-        back = (ImageView) findViewById(R.id.userinfo_back);
+        back = (ImageView) findViewById(R.id.draw_back);
         back.setOnClickListener(this);
     }
 
@@ -127,7 +126,7 @@ public class UserInfoActivity extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.userinfo_back:
+            case R.id.draw_back:
                 if (webView.canGoBack()) {
                     webView.goBack();
                 } else {

@@ -44,6 +44,8 @@ public class Api {
 
     public static String edit = "/user/edit";
 
+    public static String withdraw = "/user/withdraw";
+
     public static String disclaimer = "/disclaimer";
 
     public static String adverInfo = "/advert";

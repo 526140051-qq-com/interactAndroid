@@ -10,7 +10,7 @@
     <string name="register_text">注册</string>
     <string name="forget_text">修改</string>
     <string name="chongzhi">我的订单</string>
-    <string name="tixian">我的提现</string>
+    <string name="tixian">提现记录</string>
     <string name="myliwu">我收到的礼物</string>
     <string name="liwu">我送出的礼物</string>
     <string name="login_out">退出登录</string>
@@ -28,7 +28,7 @@
     <string name="pay_result_callback_msg" formatted="false">微信支付结果：%s</string>
     <string name="search">请输入房号搜索</string>
     <string name="level_room">离开房间</string>
-
+    <string name="my_money">我的余额</string>
     <string name="app_back">返回</string>
     <string name="app_ok">确定</string>
     <string name="app_cancel">取消</string>

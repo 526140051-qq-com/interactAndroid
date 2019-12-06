@@ -22,6 +22,7 @@ import com.lemi.interact.activity.LoginActivity;
 import com.lemi.interact.activity.RechargeRecordActivity;
 import com.lemi.interact.activity.RoomActivity;
 import com.lemi.interact.activity.UserInfoActivity;
+import com.lemi.interact.activity.WithdrawActivity;
 import com.lemi.interact.activity.WithdrawRecordActivity;
 import com.lemi.interact.api.Api;
 import com.lemi.interact.bean.ApiResult;
@@ -54,6 +55,10 @@ public class MyFragment extends Fragment implements View.OnClickListener {
     private PersonalItemView itemTiXian;
 
     private LinearLayout llUserinfo;
+
+    private TextView moneyText;
+
+    private Button goToTX;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -107,6 +112,11 @@ public class MyFragment extends Fragment implements View.OnClickListener {
                 intent1.setClass(getActivity(), UserInfoActivity.class);
                 startActivityForResult(intent1, REQ_CODE_FOR_REGISTER);
                 break;
+            case R.id.go_to_tx:
+                Intent intent4 = new Intent();
+                intent4.setClass(getActivity(), WithdrawActivity.class);
+                startActivityForResult(intent4, REQ_CODE_FOR_REGISTER);
+                break;
 
         }
     }
@@ -136,6 +146,11 @@ public class MyFragment extends Fragment implements View.OnClickListener {
 
         llUserinfo = view.findViewById(R.id.ll_userinfo);
         llUserinfo.setOnClickListener(this);
+
+        moneyText = view.findViewById(R.id.money);
+
+        goToTX = view.findViewById(R.id.go_to_tx);
+        goToTX.setOnClickListener(this);
         init();
 
     }
@@ -171,6 +186,11 @@ public class MyFragment extends Fragment implements View.OnClickListener {
                                 userPhoto.setImageURL(user.getPhoto());
                             } else {
                                 userPhoto.setImageResource(R.mipmap.defult_head);
+                            }
+                            if (user.getMoney()!=null){
+                                moneyText.setText("￥" + user.getMoney());
+                            }else {
+                                moneyText.setText("￥0");
                             }
                         } else {
                             Toast.makeText(getActivity(), apiResult.getMessage(), Toast.LENGTH_SHORT).show();

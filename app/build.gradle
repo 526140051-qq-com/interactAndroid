@@ -5,7 +5,7 @@ android {
     defaultConfig {
         applicationId "com.lemi.interact"
         minSdkVersion 19
-        targetSdkVersion 23
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -38,10 +38,10 @@ android {
 
 //    signingConfigs {
 //        release {
-            //storeFile file(MYAPP_RELEASE_STORE_FILE)
-            //storePassword MYAPP_RELEASE_STORE_PASSWORD
-            //keyAlias MYAPP_RELEASE_KEY_ALIAS
-            //keyPassword MYAPP_RELEASE_KEY_PASSWORD
+    //storeFile file(MYAPP_RELEASE_STORE_FILE)
+    //storePassword MYAPP_RELEASE_STORE_PASSWORD
+    //keyAlias MYAPP_RELEASE_KEY_ALIAS
+    //keyPassword MYAPP_RELEASE_KEY_PASSWORD
 
 //            storeFile file('interactapp.jks')
 //            storePassword '123456'
