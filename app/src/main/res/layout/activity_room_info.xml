@@ -26,6 +26,32 @@
         android:text="finish"
         android:visibility="gone" />
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="right|top"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/lw_room"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:layout_marginRight="10dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="10dp"
+            android:src="@mipmap/hezi" />
+
+        <ListView
+            android:id="@+id/liwu_list_view"
+            android:layout_width="wrap_content"
+            android:layout_below="@+id/lw_room"
+            android:layout_alignLeft="@+id/lw_room"
+            android:layout_height="match_parent"
+            android:divider="@null"
+            android:visibility="invisible"/>
+    </RelativeLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
@@ -76,7 +102,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"
-                android:src="@mipmap/guanbi" />
+                android:src="@mipmap/guanbi_active" />
         </LinearLayout>
     </LinearLayout>
 

@@ -6,28 +6,44 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
+import com.hb.dialog.dialog.ConfirmDialog;
+import com.hb.dialog.myDialog.MyAlertDialog;
+import com.hb.dialog.myDialog.MyAlertInputDialog;
 import com.lemi.interact.R;
+import com.lemi.interact.adapter.GiftAdapter;
 import com.lemi.interact.api.Api;
 import com.lemi.interact.bean.ApiResult;
+import com.lemi.interact.bean.Gift;
 import com.lemi.interact.bean.Room;
 import com.lemi.interact.util.GPUImageBeautyFilter;
 import com.lemi.interact.util.MyUtils;
+import com.tencent.mm.opensdk.modelpay.PayReq;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
+import org.json.JSONObject;
+
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cn.rongcloud.rtc.RTCErrorCode;
 import cn.rongcloud.rtc.RongRTCEngine;
@@ -47,12 +63,16 @@ import cn.rongcloud.rtc.stream.remote.RongRTCAVInputStream;
 import cn.rongcloud.rtc.user.RongRTCLocalUser;
 import cn.rongcloud.rtc.user.RongRTCRemoteUser;
 import cn.rongcloud.rtc.utils.debug.RTCDevice;
+import io.rong.imlib.IRongCallback;
+import io.rong.imlib.RongIMClient;
+import io.rong.imlib.model.Conversation;
 import io.rong.imlib.model.Message;
 import cn.rongcloud.rtc.stream.MediaType;
+import io.rong.message.TextMessage;
 
 import static com.lemi.interact.MainActivity.REQ_CODE_FOR_REGISTER;
 
-public class RoomInfoActivity extends Activity implements RongRTCEventsListener, View.OnClickListener, ILocalVideoFrameListener, ILocalAudioPCMBufferListener, IRemoteAudioPCMBufferListener {
+public class RoomInfoActivity extends Activity implements RongRTCEventsListener, View.OnClickListener, ILocalVideoFrameListener, ILocalAudioPCMBufferListener, IRemoteAudioPCMBufferListener, AdapterView.OnItemClickListener {
 
     private RongRTCVideoView local;
     private LinearLayout remotes;
@@ -68,6 +88,11 @@ public class RoomInfoActivity extends Activity implements RongRTCEventsListener,
     private GPUImageBeautyFilter beautyFilter;
     private boolean qianhou_flag = false;
     private boolean guanbi_flag = false;
+    private ImageButton lwRoom;
+    private List<Gift> giftList;
+    private GiftAdapter giftAdapter;
+    private ListView listView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +122,47 @@ public class RoomInfoActivity extends Activity implements RongRTCEventsListener,
         qhRoom.setOnClickListener(this);
         gbRoom = findViewById(R.id.gb_room);
         gbRoom.setOnClickListener(this);
+
+        lwRoom = findViewById(R.id.lw_room);
+        lwRoom.setOnClickListener(this);
+
+        listView = findViewById(R.id.liwu_list_view);
+        listView.setOnItemClickListener(this);
         joinRoom();
+        initGift();
+        receiveMsg();
+    }
+
+    private void initGift() {
+        SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
+        String userId = sharedPreferences.getString("userId", "");
+        OkHttpUtils
+                .post()
+                .url(Api.apiHost + Api.findAllGift)
+                .addParams("userId", userId)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(okhttp3.Call call, Exception e, int id) {
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        java.lang.reflect.Type type = new TypeToken<ApiResult>() {
+                        }.getType();
+                        ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
+                        if (apiResult.getCode().intValue() == 0) {
+                            String jsonString = MyUtils.getGson().toJson(apiResult.getData());
+                            Gift[] array = MyUtils.getGson().fromJson(jsonString, Gift[].class);
+                            giftList = Arrays.asList(array);
+                            giftAdapter = new GiftAdapter(context, giftList);
+                            listView.setAdapter(giftAdapter);
+                            giftAdapter.notifyDataSetChanged();
+                        } else {
+
+                        }
+                    }
+                });
     }
 
     /**
@@ -115,6 +180,7 @@ public class RoomInfoActivity extends Activity implements RongRTCEventsListener,
                 addRemoteUsersView();
                 subscribeAll();                                          //订阅资源
                 publishDefaultStream();                                  //发布资源
+//                RongIMClient.setOnReceiveMessageListener(new MyReceiveMessageListener());
             }
 
             @Override
@@ -189,7 +255,8 @@ public class RoomInfoActivity extends Activity implements RongRTCEventsListener,
                             ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
                             if (apiResult.getCode().intValue() == 0) {
                                 if (apiResult.getData() != null && !apiResult.getData().toString().equals("")) {
-                                    java.lang.reflect.Type roomType = new TypeToken<Room>(){}.getType();
+                                    java.lang.reflect.Type roomType = new TypeToken<Room>() {
+                                    }.getType();
                                     Room room = MyUtils.getGson().fromJson(apiResult.getData().toString(), roomType);
                                     if (room.getCreateUserId() != null && room.getCreateUserId().toString().equals(userId)) {
                                         String str = "TA在热忱陪着你，确定要离开房间吗？若离开，本次收益将退回。";
@@ -237,7 +304,7 @@ public class RoomInfoActivity extends Activity implements RongRTCEventsListener,
                                                     public void onClick(DialogInterface dialog, int which) {
                                                     }
                                                 }).show();
-                                    }else {
+                                    } else {
                                         removeListener();
                                         quit();
                                         Intent intent4 = new Intent();
@@ -279,6 +346,12 @@ public class RoomInfoActivity extends Activity implements RongRTCEventsListener,
             }
             guanbi_flag = !guanbi_flag;
             RongRTCCapture.getInstance().muteLocalVideo(guanbi_flag);
+        } else if (view.getId() == R.id.lw_room) {
+            if (listView.getVisibility() == view.INVISIBLE) {
+                listView.setVisibility(view.VISIBLE);
+            } else if (listView.getVisibility() == view.VISIBLE) {
+                listView.setVisibility(view.INVISIBLE);
+            }
         }
     }
 
@@ -365,6 +438,11 @@ public class RoomInfoActivity extends Activity implements RongRTCEventsListener,
 
     @Override
     public void onRemoteUserPublishResource(RongRTCRemoteUser rongRTCRemoteUser, List<RongRTCAVInputStream> list) {
+
+        Map<String, Object> map = new HashMap<>();
+        map.put(RTCDevice.CodecCofig.hwDecode, false);
+        RTCDevice.getInstance().setCodecConfig(map);
+
         for (RongRTCAVInputStream inputStream : rongRTCRemoteUser.getRemoteAVStreams()) {
             if (inputStream.getMediaType() == MediaType.VIDEO) {
                 RongRTCVideoView videoView = RongRTCEngine.getInstance().createVideoView(this);
@@ -417,8 +495,8 @@ public class RoomInfoActivity extends Activity implements RongRTCEventsListener,
                 remotes.removeView(inputStream.getRongRTCVideoView());
             }
         }
-        SharedPreferences sharedPreferences= getSharedPreferences("data", Context.MODE_PRIVATE);
-        final String userId=sharedPreferences.getString("userId","");
+        SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
+        final String userId = sharedPreferences.getString("userId", "");
         OkHttpUtils
                 .post()
                 .url(Api.apiHost + Api.findRoomByNum)
@@ -428,6 +506,7 @@ public class RoomInfoActivity extends Activity implements RongRTCEventsListener,
                     @Override
                     public void onError(okhttp3.Call call, Exception e, int id) {
                     }
+
                     @Override
                     public void onResponse(String response, int id) {
                         java.lang.reflect.Type type = new TypeToken<ApiResult>() {
@@ -435,9 +514,10 @@ public class RoomInfoActivity extends Activity implements RongRTCEventsListener,
                         ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
                         if (apiResult.getCode().intValue() == 0) {
                             if (apiResult.getData() != null && !apiResult.getData().toString().equals("")) {
-                                java.lang.reflect.Type roomType = new TypeToken<Room>(){}.getType();
+                                java.lang.reflect.Type roomType = new TypeToken<Room>() {
+                                }.getType();
                                 Room room = MyUtils.getGson().fromJson(apiResult.getData().toString(), roomType);
-                                if (room.getJoinUserId()!=null&&room.getJoinUserId().intValue()==Integer.parseInt(userId)){
+                                if (room.getJoinUserId() != null && room.getJoinUserId().intValue() == Integer.parseInt(userId)) {
                                     Toast.makeText(RoomInfoActivity.this, "房主已退出房间", Toast.LENGTH_SHORT).show();
                                     removeListener();
                                     quit();
@@ -446,10 +526,10 @@ public class RoomInfoActivity extends Activity implements RongRTCEventsListener,
                                     startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
                                     finish();
                                 }
-                                if (room.getCreateUserId()!=null&&room.getCreateUserId().intValue()==Integer.parseInt(userId)){
+                                if (room.getCreateUserId() != null && room.getCreateUserId().intValue() == Integer.parseInt(userId)) {
                                     Toast.makeText(RoomInfoActivity.this, "对方已退出房间", Toast.LENGTH_SHORT).show();
                                 }
-                            }else {
+                            } else {
                                 Toast.makeText(RoomInfoActivity.this, "房间已解散", Toast.LENGTH_SHORT).show();
                                 removeListener();
                                 quit();
@@ -519,7 +599,8 @@ public class RoomInfoActivity extends Activity implements RongRTCEventsListener,
                         ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
                         if (apiResult.getCode().intValue() == 0) {
                             if (apiResult.getData() != null && !apiResult.getData().toString().equals("")) {
-                                java.lang.reflect.Type roomType = new TypeToken<Room>(){}.getType();
+                                java.lang.reflect.Type roomType = new TypeToken<Room>() {
+                                }.getType();
                                 Room room = MyUtils.getGson().fromJson(apiResult.getData().toString(), roomType);
                                 if (room.getCreateUserId() != null && room.getCreateUserId().toString().equals(userId)) {
                                     String str = "TA在热忱陪着你，确定要离开房间吗？若离开，本次收益将退回。";
@@ -567,7 +648,7 @@ public class RoomInfoActivity extends Activity implements RongRTCEventsListener,
                                                 public void onClick(DialogInterface dialog, int which) {
                                                 }
                                             }).show();
-                                }else {
+                                } else {
                                     removeListener();
                                     quit();
                                     Intent intent4 = new Intent();
@@ -600,7 +681,7 @@ public class RoomInfoActivity extends Activity implements RongRTCEventsListener,
         RongRTCEngine.getInstance().quitRoom(mRongRTCRoom.getRoomId(), new RongRTCResultUICallBack() {
             @Override
             public void onUiSuccess() {
-                Toast.makeText(RoomInfoActivity.this, "离开房间成功", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(RoomInfoActivity.this, "离开房间成功", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -658,4 +739,233 @@ public class RoomInfoActivity extends Activity implements RongRTCEventsListener,
     public byte[] onRemoteBuffer(RTCAudioFrame rtcAudioFrame) {
         return rtcAudioFrame.getBytes();
     }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        final String giftId = (String) ((TextView) view.findViewById(R.id.gift_id)).getText();
+        final String giftName = (String) ((TextView) view.findViewById(R.id.gift_name)).getText();
+        SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
+        final String userId = sharedPreferences.getString("userId", "");
+        //todo
+        final MyAlertInputDialog myAlertInputDialog = new MyAlertInputDialog(this).builder()
+                .setTitle("请输入礼物数量")
+                .setEditText("")
+                .setEditType(InputType.TYPE_CLASS_NUMBER);
+        myAlertInputDialog.setPositiveButton("送出", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String num = myAlertInputDialog.getResult();
+                if (num == null || "".equals(num)) {
+                    Toast.makeText(RoomInfoActivity.this, "请输入礼物数量", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                OkHttpUtils
+                        .post()
+                        .url(Api.apiHost + Api.giveGift)
+                        .addParams("num", num)
+                        .addParams("giftId", giftId)
+                        .addParams("userId", userId)
+                        .addParams("roomNum", mRoomId)
+                        .build()
+                        .execute(new StringCallback() {
+                            @Override
+                            public void onError(okhttp3.Call call, Exception e, int id) {
+                            }
+
+                            @Override
+                            public void onResponse(String response, int id) {
+                                java.lang.reflect.Type type = new TypeToken<ApiResult>() {}.getType();
+                                ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
+                                if (apiResult.getCode() == 0){
+                                    Toast.makeText(RoomInfoActivity.this, "已成功送出礼物", Toast.LENGTH_SHORT).show();
+                                    initGift();
+                                    String phone = apiResult.getData().toString();
+                                    sendMessage(phone,giftName,num);
+                                }else if (apiResult.getCode() == 1){
+                                    Toast.makeText(RoomInfoActivity.this, "礼物剩余数量不足", Toast.LENGTH_SHORT).show();
+                                    buyGift(giftId,userId,apiResult.getData().toString());
+                                }
+                            }
+                        });
+                myAlertInputDialog.dismiss();
+            }
+        }).setNegativeButton("取消", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myAlertInputDialog.dismiss();
+            }
+        });
+        myAlertInputDialog.show();
+    }
+
+    private void buyGift(final String giftId, final String userId, final String num){
+        ConfirmDialog confirmDialog = new ConfirmDialog(this);
+        confirmDialog.setLogoImg(R.mipmap.dialog_notice).setMsg("礼物剩余数量不足，是否购买？");
+        confirmDialog.setClickListener(new ConfirmDialog.OnBtnClickListener() {
+            @Override
+            public void ok() {
+                Number number = (Number) Double.parseDouble(num);
+                OkHttpUtils
+                        .post()
+                        .url(Api.apiHost + Api.buyGift)
+                        .addParams("count", number.intValue() + "")
+                        .addParams("giftId", giftId)
+                        .addParams("userId", userId)
+                        .build()
+                        .execute(new StringCallback() {
+                            @Override
+                            public void onError(okhttp3.Call call, Exception e, int id) {
+                                System.out.println("11111111111");
+                            }
+                            @Override
+                            public void onResponse(String response, int id) {
+                                java.lang.reflect.Type type = new TypeToken<ApiResult>() {}.getType();
+                                ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
+                                if (apiResult.getCode().intValue() == 0) {
+                                    if (apiResult.getData() != null) {
+                                        IWXAPI api = WXAPIFactory.createWXAPI(context, "wxe3d1f34f56595a6e");
+                                        try {
+                                            JSONObject jsonObject = new JSONObject(apiResult.getData().toString());
+                                            PayReq req = new PayReq();
+                                            req.appId = jsonObject.getString("appid");
+                                            req.partnerId = jsonObject.getString("partnerid");
+                                            req.prepayId = jsonObject.getString("prepayid");
+                                            req.nonceStr = jsonObject.getString("noncestr");
+                                            req.timeStamp = jsonObject.getString("timestamp");
+                                            req.packageValue = jsonObject.getString("package");
+                                            req.sign = jsonObject.getString("sign");
+                                            api.sendReq(req);
+                                            SharedPreferences sharedPreferences = context.getSharedPreferences("data", Context.MODE_PRIVATE);
+                                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                                            editor.putString("pay_type","buy_gift");
+                                            editor.commit();
+                                            Toast.makeText(context, "发起支付成功", Toast.LENGTH_SHORT).show();
+                                        } catch (Exception e) {
+                                            Toast.makeText(context, "发起支付失败" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                } else {
+                                    Toast.makeText(context, apiResult.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+            }
+
+            @Override
+            public void cancel() {
+
+            }
+        });
+        confirmDialog.show();
+//        MyAlertDialog myAlertDialog = new MyAlertDialog(this).builder()
+//                .setTitle("提醒")
+//                .setMsg("礼物剩余数量不足，是否购买？")
+//                .setPositiveButton("前往购买", new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        OkHttpUtils
+//                                .post()
+//                                .url(Api.apiHost + Api.buyGift)
+//                                .addParams("count", num)
+//                                .addParams("giftId", giftId)
+//                                .addParams("userId", userId)
+//                                .build()
+//                                .execute(new StringCallback() {
+//                                    @Override
+//                                    public void onError(okhttp3.Call call, Exception e, int id) {
+//                                    }
+//                                    @Override
+//                                    public void onResponse(String response, int id) {
+//                                        java.lang.reflect.Type type = new TypeToken<ApiResult>() {}.getType();
+//                                        ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
+//                                        if (apiResult.getCode().intValue() == 0) {
+//                                            if (apiResult.getData() != null) {
+//                                                IWXAPI api = WXAPIFactory.createWXAPI(context, "wxe3d1f34f56595a6e");
+//                                                try {
+//                                                    JSONObject jsonObject = new JSONObject(apiResult.getData().toString());
+//                                                    PayReq req = new PayReq();
+//                                                    req.appId = jsonObject.getString("appid");
+//                                                    req.partnerId = jsonObject.getString("partnerid");
+//                                                    req.prepayId = jsonObject.getString("prepayid");
+//                                                    req.nonceStr = jsonObject.getString("noncestr");
+//                                                    req.timeStamp = jsonObject.getString("timestamp");
+//                                                    req.packageValue = jsonObject.getString("package");
+//                                                    req.sign = jsonObject.getString("sign");
+//                                                    api.sendReq(req);
+//                                                    SharedPreferences sharedPreferences = context.getSharedPreferences("data", Context.MODE_PRIVATE);
+//                                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+//                                                    editor.putString("pay_type","buy_gift");
+//                                                    editor.commit();
+//                                                    Toast.makeText(context, "发起支付成功", Toast.LENGTH_SHORT).show();
+//                                                } catch (Exception e) {
+//                                                    Toast.makeText(context, "发起支付失败" + e.getMessage(), Toast.LENGTH_SHORT).show();
+//                                                }
+//                                            }
+//                                        } else {
+//                                            Toast.makeText(context, apiResult.getMessage(), Toast.LENGTH_SHORT).show();
+//                                        }
+//                                    }
+//                                });
+//                    }
+//                }).setNegativeButton("取消", new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                    }
+//                });
+//        myAlertDialog.show();
+
+    }
+
+    /**
+     * 发送消息
+     */
+    private void sendMessage(String targetId,String giftName,String num){
+        TextMessage textMessage = TextMessage.obtain("收到礼物 " + giftName + " * " + num);
+        RongIMClient.getInstance().sendMessage(Conversation.ConversationType.PRIVATE, targetId, textMessage, null, null, new RongIMClient.SendMessageCallback() {
+            @Override
+            public void onSuccess(Integer integer) {
+                System.out.println("消息发送成功");
+            }
+
+            @Override
+            public void onError(Integer integer, RongIMClient.ErrorCode errorCode) {
+                System.out.println("消息发送失败");
+            }
+        }, null);
+
+    }
+
+    private void receiveMsg() {
+        RongIMClient.setOnReceiveMessageListener(new RongIMClient.OnReceiveMessageListener() {
+            /**
+             * 收到消息的处理。
+             * @param message 收到的消息实体。
+             * @param i       剩余未拉取消息数目。
+             * @return 是否接收
+             */
+            @Override
+            public boolean onReceived(final Message message, int i) {
+                System.out.println("接收消息");
+                if (message != null) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(RoomInfoActivity.this, ((TextMessage) message.getContent()).getContent(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                return true;
+            }
+        });
+    }
+
+
+//    private class MyReceiveMessageListener implements RongIMClient.OnReceiveMessageListener {
+//        @Override
+//        public boolean onReceived(Message message, int left) {
+//            Toast.makeText(RoomInfoActivity.this, message.getExtra(), Toast.LENGTH_SHORT).show();
+//            return false;
+//        }
+//    }
 }

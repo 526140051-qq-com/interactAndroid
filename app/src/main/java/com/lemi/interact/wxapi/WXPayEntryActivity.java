@@ -110,6 +110,8 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
                     editor.commit();
                 } else if (payType.equals("charge_again")) {
                     finish();
+                }else if (payType.equals("buy_gift")) {
+                    finish();
                 }
             } else {
                 if (payType.equals("room")) {

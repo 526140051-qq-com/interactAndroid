@@ -2,10 +2,12 @@ package com.lemi.interact.fragment;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,9 +20,12 @@ import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
 import com.lemi.interact.R;
+import com.lemi.interact.activity.LiWuActivity;
 import com.lemi.interact.activity.LoginActivity;
+import com.lemi.interact.activity.MyLiWuActivity;
 import com.lemi.interact.activity.RechargeRecordActivity;
 import com.lemi.interact.activity.RoomActivity;
+import com.lemi.interact.activity.RoomInfoActivity;
 import com.lemi.interact.activity.UserInfoActivity;
 import com.lemi.interact.activity.WithdrawActivity;
 import com.lemi.interact.activity.WithdrawRecordActivity;
@@ -41,6 +46,8 @@ import static com.lemi.interact.MainActivity.REQ_CODE_FOR_REGISTER;
 public class MyFragment extends Fragment implements View.OnClickListener {
 
     private Button loginOut;
+
+    private Button cancellation;
 
     private TextView userNickName;
 
@@ -82,6 +89,49 @@ public class MyFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.cancellation:
+                final SharedPreferences sharedPreferences1 = getActivity().getSharedPreferences("data", Context.MODE_PRIVATE);
+                final String userId = sharedPreferences1.getString("userId", "");
+                String str = "注销后所有的礼物及奖励全部清零！";
+                new AlertDialog.Builder(getActivity()).setTitle("是否确定注销？")
+                        .setMessage(str)
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                OkHttpUtils
+                                        .post()
+                                        .url(Api.apiHost + Api.cancellation)
+                                        .addParams("userId", userId)
+                                        .build()
+                                        .execute(new StringCallback() {
+                                            @Override
+                                            public void onError(okhttp3.Call call, Exception e, int id) {
+                                            }
+                                            @Override
+                                            public void onResponse(String response, int id) {
+                                                java.lang.reflect.Type type = new TypeToken<ApiResult>() {
+                                                }.getType();
+                                                ApiResult apiResult = MyUtils.getGson().fromJson(response, type);
+                                                if (apiResult.getCode().intValue() == 0) {
+                                                    SharedPreferences.Editor editor = sharedPreferences1.edit();
+                                                    editor.clear();
+                                                    editor.commit();
+                                                    Intent intent = new Intent();
+                                                    intent.setClass(getActivity(), LoginActivity.class);
+                                                    startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
+                                                }
+                                                Toast.makeText(getActivity(), apiResult.getMessage(), Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                            }
+                        })
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        }).show();
+                break;
             case R.id.login_out:
                 SharedPreferences sharedPreferences = getActivity().getSharedPreferences("data", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -92,10 +142,14 @@ public class MyFragment extends Fragment implements View.OnClickListener {
                 startActivityForResult(intent, REQ_CODE_FOR_REGISTER);
                 break;
             case R.id.item_liwu:
-                Toast.makeText(getActivity(), "暂未开放", Toast.LENGTH_SHORT).show();
+                Intent intent5 = new Intent();
+                intent5.setClass(getActivity(), LiWuActivity.class);
+                startActivityForResult(intent5, REQ_CODE_FOR_REGISTER);
                 break;
             case R.id.item_my_liwu:
-                Toast.makeText(getActivity(), "暂未开放", Toast.LENGTH_SHORT).show();
+                Intent intent6 = new Intent();
+                intent6.setClass(getActivity(), MyLiWuActivity.class);
+                startActivityForResult(intent6, REQ_CODE_FOR_REGISTER);
                 break;
             case R.id.item_chongzhi:
                 Intent intent3 = new Intent();
@@ -127,6 +181,9 @@ public class MyFragment extends Fragment implements View.OnClickListener {
 
         loginOut = view.findViewById(R.id.login_out);
         loginOut.setOnClickListener(this);
+
+        cancellation = view.findViewById(R.id.cancellation);
+        cancellation.setOnClickListener(this);
 
         userNickName = view.findViewById(R.id.user_nick_name);
 

@@ -103,7 +103,9 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".activity.WithdrawActivity"></activity>
+        <activity android:name=".activity.WithdrawActivity" />
+        <activity android:name=".activity.LiWuActivity" />
+        <activity android:name=".activity.MyLiWuActivity"></activity>
     </application>
 
 </manifest>

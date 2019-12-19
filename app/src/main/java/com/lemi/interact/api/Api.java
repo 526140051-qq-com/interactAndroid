@@ -2,13 +2,13 @@ package com.lemi.interact.api;
 
 public class Api {
     public static String apiHost = "http://116.62.193.50:8080/";
-//    public static String apiHost = "http://47.104.192.82:8080/";
     public static String h5Host = "http://116.62.193.50:8082/#";
-//    public static String h5Host = "http://web.cmbc.joylingame.com/#";
 
     public static String login = "user/login";
 
     public static String sendMsg = "user/sendMsg";
+
+    public static String findAllGift = "gift/findAllGift";
 
     public static String register = "user/register";
 
@@ -18,11 +18,17 @@ public class Api {
 
     public static String findRoomByNum = "room/findRoomByNum";
 
+    public static String giveGift = "gift/giveGift";
+
+    public static String buyGift = "gift/buyGift";
+
     public static String getCityNameByL = "room/getCityNameByL";
 
     public static String isChargeExpired = "user/isChargeExpired";
 
     public static String findUserById = "user/findUserById";
+
+    public static String cancellation = "user/cancellation";
 
     public static String getToken = "rong/getToken";
 
@@ -43,6 +49,10 @@ public class Api {
     public static String ticket = "/ticket";
 
     public static String edit = "/user/edit";
+
+    public static String giveMeLiwu = "/user/gift-receive";
+
+    public static String giveLiwu = "/user/gift-send";
 
     public static String withdraw = "/user/withdraw";
 
